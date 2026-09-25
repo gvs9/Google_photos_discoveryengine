@@ -1,0 +1,40 @@
+# Scraping
+requests>=2.31
+beautifulsoup4>=4.12
+google-play-scraper>=1.2
+# app-store-scraper — install with: pip install app-store-scraper --no-deps
+# (its requests==2.23.0 dep conflicts; modern requests works fine in practice)
+apify-client>=1.7      # Reddit scraping via Apify cloud actor
+tweepy>=4.14
+youtube-data-api>=0.0.21
+langdetect>=1.0.9
+
+# NLP & Embeddings
+spacy>=3.7
+sentence-transformers>=2.6
+groq>=0.9
+
+# Vector Store
+chromadb>=0.5
+
+# Clustering
+hdbscan>=0.8
+scikit-learn>=1.4
+numpy>=1.26
+pandas>=2.2
+pyarrow>=16.0
+
+# Deduplication
+datasketch>=1.6
+
+# LLM Orchestration
+tenacity>=8.3
+tqdm>=4.66
+
+# Config
+pydantic-settings>=2.2
+python-dotenv>=1.0
+
+# Output
+streamlit>=1.35
+jinja2>=3.1

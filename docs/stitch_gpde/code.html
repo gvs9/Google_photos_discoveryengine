@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Google Photos Discovery Engine — Telemetry &amp; ML Insights</title>
+<!-- Tailwind CSS CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            void: '#05070e',
+            obsidian: '#0b0f19',
+            surface: 'rgba(15, 23, 42, 0.75)',
+            cyan: {
+              accent: '#00f2fe',
+              glow: 'rgba(0, 242, 254, 0.25)',
+            },
+            violet: {
+              accent: '#8b5cf6',
+              glow: 'rgba(139, 92, 246, 0.25)',
+            },
+            fuchsia: {
+              accent: '#ec4899',
+              glow: 'rgba(236, 72, 153, 0.25)',
+            },
+            mint: {
+              accent: '#10b981',
+              glow: 'rgba(16, 185, 129, 0.25)',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['Space Grotesk', 'Fira Code', 'monospace'],
+            grotesk: ['Space Grotesk', 'sans-serif']
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 20px -3px rgba(0, 242, 254, 0.35)',
+            'glow-violet': '0 0 20px -3px rgba(139, 92, 246, 0.35)',
+            'glow-fuchsia': '0 0 20px -3px rgba(236, 72, 153, 0.35)',
+            'glass-edge': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.4)'
+          }
+        }
+      }
+    }
+  </script>
+<!-- Google Fonts: Space Grotesk + Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- React 18, Babel -->
+<script crossorigin="" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+    body {
+      background-color: #05070e;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .font-grotesk {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .font-mono-code {
+      font-family: 'Space Grotesk', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    /* Custom Scrollbar for dense telemetry */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #070a14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+    
+    /* Cyber grid overlay */
+    .cyber-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="bg-[#05070e] text-slate-100 antialiased selection:bg-cyan-accent selection:text-black">
+<div id="root"></div>
+<script type="text/babel">
+    const { useState, useEffect, useMemo, useRef } = React;
+
+    // SVG Icons
+    const Icons = {
+      Activity: () => <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
+      Layers: () => <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>,
+      GitBranch: () => <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>,
+      BarChart2: () => <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>,
+      Bot: () => <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>,
+      Search: () => <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
+      Cpu: () => <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>,
+      RefreshCw: () => <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>,
+      Terminal: () => <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
+      Send: () => <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>,
+      AlertCircle: () => <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      CheckCircle2: () => <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      Filter: () => <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>,
+      ChevronRight: () => <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>,
+      ChevronLeft: () => <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+    };
+
+    // Realistic Google Photos Retrieval Cluster Data
+    const RETRIEVAL_CLUSTERS = [
+      {
+        id: 'temporal-memory-gap',
+        name: 'Temporal Memory Gap',
+        category: 'Temporal',
+        color: '#00f2fe',
+        volume: 3840,
+        severity: 4.8,
+        uniqueness: 4.2,
+        feasibility: 4.5,
+        composite: 92.4,
+        description: 'Users recall relative episodic timing ("the summer before college", "that trip right after lockdown ended") but query system forces calendar month/year matching.',
+        proxyMetric: '42.8% of date-range filters abandoned within 6s',
+        topQuotes: [
+          { text: "I remember taking this picture right before my daughter learned to walk, around late spring 2021. But I don't know the exact month. Searching 'daughter walking' gives me 800 random toddler clips.", source: 'Reddit r/googlephotos', emotionalSeverity: 'High', searchAttempts: 4 },
+          { text: "Looking for photos from 'that road trip where my car broke down'. Google Photos has no concept of life events unless I manually tagged an album 4 years ago.", source: 'App Store Review (v6.72)', emotionalSeverity: 'Critical', searchAttempts: 7 },
+          { text: "I took a screenshot of a recipe last winter when it was snowing heavily. Typed 'snow recipe' - 0 hits.", source: 'Google Support Forum', emotionalSeverity: 'Medium', searchAttempts: 3 }
+        ]
+      },
+      {
+        id: 'location-amnesia',
+        name: 'Location Amnesia & Landmark Blindness',
+        category: 'Spatial',
+        color: '#8b5cf6',
+        volume: 2950,
+        severity: 4.4,
+        uniqueness: 3.9,
+        feasibility: 4.1,
+        composite: 86.1,
+        description: 'User recalls sensory vibe ("cozy dim cafe with green neon sign") but GPS coordinates were inaccurate or user has no city/venue name.',
+        proxyMetric: '61.2% zero-result rate on sensory atmosphere queries',
+        topQuotes: [
+          { text: "There was this incredible taco stand in Mexico with yellow vinyl barstools. I don't know the neighborhood name. Photos map view just lumps 4,000 photos into Mexico City pin.", source: 'X / Twitter', emotionalSeverity: 'High', searchAttempts: 5 },
+          { text: "Searching 'green tile bathroom hotel' because I wanted to show my interior designer. Found zero. I know it's in my library somewhere in 2022.", source: 'Reddit r/Android', emotionalSeverity: 'Medium', searchAttempts: 6 },
+          { text: "I remember being on a cliff overlooking a lighthouse during sunset. Search for 'lighthouse sunset' returns photos from 3 different vacations except the one I need.", source: 'Play Store Review', emotionalSeverity: 'High', searchAttempts: 4 }
+        ]
+      },
+      {
+        id: 'object-attribute-missing',
+        name: 'Multi-Object & Color Detail Missing',
+        category: 'Semantic Visual',
+        color: '#ec4899',
+        volume: 4520,
+        severity: 4.9,
+        uniqueness: 4.6,
+        feasibility: 3.8,
+        composite: 94.7,
+        description: 'Users recall specific combined attributes ("my friend wearing a mustard jacket holding a brown dog") but models tokenize separately and return noisy unions.',
+        proxyMetric: 'Search precision drops from 88% (1 token) to 14% (3+ tokens)',
+        topQuotes: [
+          { text: "I remember the photo was at a beach sunset, but searching 'beach' gives me 5,000 photos. When I typed 'beach red bucket dog sunset' it gave me 2 completely unrelated pictures. I gave up.", source: 'User Feedback Study P-104', emotionalSeverity: 'Critical', searchAttempts: 8 },
+          { text: "Trying to find a photo of my mom's handmade blue quilt. Typed 'blue handmade quilt'. Shows pictures of blue skies, beds, and random blankets.", source: 'Reddit r/googlephotos', emotionalSeverity: 'Critical', searchAttempts: 5 },
+          { text: "My passport document screenshot with white background. Search 'passport' brings up 30 photos of airport boarding passes instead.", source: 'Google Support Community', emotionalSeverity: 'High', searchAttempts: 6 }
+        ]
+      },
+      {
+        id: 'vague-affective-recall',
+        name: 'Affective & Mood-Based Recollection',
+        category: 'Emotional/Intent',
+        color: '#10b981',
+        volume: 2180,
+        severity: 4.1,
+        uniqueness: 4.8,
+        feasibility: 3.4,
+        composite: 79.5,
+        description: 'Recollection encoded through emotional state or aesthetic vibe ("goofy blurry photo", "golden hour candid laugh", "cozy Christmas morning vibes").',
+        proxyMetric: '73.4% of emotional/aesthetic queries end in empty query abandon',
+        topQuotes: [
+          { text: "I just wanted that funny blurry picture where everyone was laughing so hard at dinner. No query syntax exists for 'chaotic laughing blurred dinner'.", source: 'Play Store Review', emotionalSeverity: 'Medium', searchAttempts: 3 },
+          { text: "Searching 'romantic mood' or 'peaceful morning coffee' yields nothing. Computers don't feel human memory.", source: 'User Study P-089', emotionalSeverity: 'Medium', searchAttempts: 4 }
+        ]
+      },
+      {
+        id: 'ocr-inflexibility',
+        name: 'OCR & Handwritten Text Blindspots',
+        category: 'Text/Document',
+        color: '#f59e0b',
+        volume: 1890,
+        severity: 3.8,
+        uniqueness: 3.5,
+        feasibility: 4.7,
+        composite: 76.2,
+        description: 'Handwritten sticky notes, stylized signage, blurred receipts, or partial phone numbers fail to match strict keyword indexing.',
+        proxyMetric: 'Zero-result rate 48.9% on handwriting and cursive signage',
+        topQuotes: [
+          { text: "I took a photo of a whiteboard with our WiFi password and gate code written in dry-erase marker. Typed the exact words. Not found.", source: 'X / Twitter', emotionalSeverity: 'High', searchAttempts: 5 },
+          { text: "Took a snapshot of a vintage bookstore neon sign. Search 'bookstore neon' returns Tokyo street photography from 2019 instead.", source: 'Community Forum', emotionalSeverity: 'Low', searchAttempts: 2 }
+        ]
+      }
+    ];
+
+    // Pipeline Live Streaming Simulation Data
+    const STREAM_EVENTS = [
+      {
+        id: 'ev-101',
+        timestamp: '14:22:04.102',
+        source: 'Play Store (v6.80)',
+        rawQuote: "I spent 40 minutes looking for that picture of my golden retriever puppy asleep in a blue laundry basket. Found nothing.",
+        transformation: {
+          problem: "Complex attribute binding failure (Dog + Puppy + Color + Container)",
+          category: "Object & Attribute Binding",
+          severityScore: 0.92,
+          intentTokens: ["retriever", "puppy", "blue basket", "sleeping"],
+          vectorDistance: 0.78
+        }
+      },
+      {
+        id: 'ev-102',
+        timestamp: '14:22:05.488',
+        source: 'Reddit r/googlephotos',
+        rawQuote: "Why can't I search 'that concert right before COVID started'? I don't remember if it was Feb or March 2020!",
+        transformation: {
+          problem: "Relative episodic temporal landmark unresolvable",
+          category: "Temporal Memory Gap",
+          severityScore: 0.88,
+          intentTokens: ["concert", "pre-covid", "early 2020", "unanchored date"],
+          vectorDistance: 0.84
+        }
+      },
+      {
+        id: 'ev-103',
+        timestamp: '14:22:07.012',
+        source: 'App Store Review',
+        rawQuote: "I remember my son was wearing a dinosaur hat on a red tractor. Search returned 400 photos of dinosaurs and zero tractors.",
+        transformation: {
+          problem: "Semantic intersection breakdown in multi-entity queries",
+          category: "Multi-Object Detail Missing",
+          severityScore: 0.95,
+          intentTokens: ["child", "dinosaur hat", "red tractor"],
+          vectorDistance: 0.89
+        }
+      },
+      {
+        id: 'ev-104',
+        timestamp: '14:22:08.319',
+        source: 'X / Twitter Telemetry',
+        rawQuote: "Took a photo of a parking spot ticket with number C-42 in a dim underground lot. Searched 'C-42', gave 0 results. Had to walk 5 floors.",
+        transformation: {
+          problem: "Low-light OCR failure & short alphanumeric indexing defect",
+          category: "OCR Inflexibility",
+          severityScore: 0.98,
+          intentTokens: ["parking ticket", "C-42", "handwritten/stamped text"],
+          vectorDistance: 0.91
+        }
+      },
+      {
+        id: 'ev-105',
+        timestamp: '14:22:09.914',
+        source: 'In-App CSAT Intercept',
+        rawQuote: "I remember the photo was at a beach sunset, but searching 'beach' gives me 5,000 photos. I gave up.",
+        transformation: {
+          problem: "Recall-precision overload: High-level noun returns insurmountable result set without refinement cues",
+          category: "Refinement & Intent Gap",
+          severityScore: 0.94,
+          intentTokens: ["beach", "sunset", "vague context"],
+          vectorDistance: 0.86
+        }
+      }
+    ];
+
+    // Main App Component
+    function App() {
+      const [currentView, setCurrentView] = useState('pipeline');
+      const [selectedClusterId, setSelectedClusterId] = useState('object-attribute-missing');
+      const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+      const [clustersData, setClustersData] = useState(RETRIEVAL_CLUSTERS);
+
+      useEffect(() => {
+        fetch('/api/data')
+          .then(res => res.json())
+          .then(data => {
+            if (data.clusters) {
+              const colors = ['#00f2fe', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#3b82f6'];
+              const mapped = data.clusters.map((c, i) => ({
+                id: c.rank.toString(),
+                name: c.label,
+                category: c.gap,
+                color: colors[i % colors.length],
+                volume: c.volume,
+                severity: 4.5,
+                uniqueness: 4.0,
+                feasibility: 4.0,
+                composite: 85.0,
+                description: `Memory cues: ${c.memory_cues?.join(', ') || 'N/A'}. Behaviors: ${c.behavior_tags?.join(', ') || 'N/A'}.`,
+                proxyMetric: 'N/A',
+                topQuotes: (c.top_quotes || []).map(q => ({
+                  text: q,
+                  source: 'Data Source',
+                  emotionalSeverity: 'Medium',
+                  searchAttempts: 1
+                }))
+              }));
+              setClustersData(mapped);
+              if (mapped.length > 0) {
+                setSelectedClusterId(mapped[0].id);
+              }
+            }
+          })
+          .catch(err => console.error("Error fetching data:", err));
+      }, []);
+
+      // Live counters
+      const [counts, setCounts] = useState({
+        playStore: 148920,
+        reddit: 62410,
+        twitter: 98140,
+        community: 41250,
+        totalIngested: 350720,
+        pipelineLatency: 142
+      });
+
+      // Periodic increment to simulate live incoming telemetry
+      useEffect(() => {
+        const interval = setInterval(() => {
+          setCounts(prev => ({
+            ...prev,
+            playStore: prev.playStore + Math.floor(Math.random() * 3),
+            reddit: prev.reddit + Math.floor(Math.random() * 2),
+            twitter: prev.twitter + Math.floor(Math.random() * 3),
+            community: prev.community + (Math.random() > 0.6 ? 1 : 0),
+            totalIngested: prev.totalIngested + Math.floor(Math.random() * 6) + 1,
+            pipelineLatency: 135 + Math.floor(Math.random() * 15)
+          }));
+        }, 2500);
+        return () => clearInterval(interval);
+      }, []);
+
+      const activeCluster = useMemo(() => {
+        return clustersData.find(c => c.id === selectedClusterId) || clustersData[0];
+      }, [selectedClusterId, clustersData]);
+
+      const navItems = [
+        { id: 'pipeline', label: 'Live Data Pipeline', icon: Icons.Activity, badge: 'LIVE' },
+        { id: 'explorer', label: 'Discovery Engine Explorer', icon: Icons.Layers, badge: '5 Clusters' },
+        { id: 'taxonomy', label: 'Friction Taxonomy', icon: Icons.GitBranch, badge: '4 Gaps' },
+        { id: 'scorecard', label: 'Opportunity Scorecard', icon: Icons.BarChart2, badge: 'Ranked' },
+        { id: 'copilot', label: 'PM Discovery AI Copilot', icon: Icons.Bot, badge: 'v2.4 LLM' }
+      ];
+
+      return (
+        <div className="min-h-screen w-full bg-[#05070e] text-slate-100 flex flex-col md:flex-row overflow-x-hidden cyber-grid relative selection:bg-cyan-accent selection:text-black">
+          {/* Subtle Cyber Glow ambient backgrounds */}
+          <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[140px] pointer-events-none -z-10" />
+          <div className="fixed bottom-0 right-1/4 w-[600px] h-[600px] bg-violet-600/5 rounded-full blur-[160px] pointer-events-none -z-10" />
+
+          {/* Left Navigation Sidebar */}
+          <aside className={`h-screen sticky top-0 flex-shrink-0 z-30 flex flex-col border-r border-slate-800/80 bg-[#0b0f19]/95 backdrop-blur-2xl transition-all duration-300 overflow-y-auto ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>
+            {/* Header Brand */}
+            <div className="p-5 border-b border-slate-800/70 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center space-x-3 overflow-hidden">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500/20 via-slate-900 to-violet-500/30 border border-cyan-accent/40 flex items-center justify-center shadow-glow-cyan flex-shrink-0">
+                  <div className="w-3.5 h-3.5 rounded-full bg-cyan-accent animate-pulse" />
+                </div>
+                {!sidebarCollapsed && (
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-grotesk font-bold text-sm tracking-wider text-slate-100 uppercase flex items-center gap-1.5 truncate">
+                      Google Photos
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-accent border border-cyan-500/30 flex-shrink-0">AI R&D</span>
+                    </span>
+                    <span className="text-[11px] text-slate-400 font-mono tracking-tight truncate">Discovery Telemetry</span>
+                  </div>
+                )}
+              </div>
+              <button 
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="text-slate-400 hover:text-cyan-accent p-1.5 rounded-lg hover:bg-slate-800/50 transition flex-shrink-0"
+                title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+              >
+                {sidebarCollapsed ? <Icons.ChevronRight /> : <Icons.ChevronLeft />}
+              </button>
+            </div>
+
+            {/* Pipeline Status Banner */}
+            {!sidebarCollapsed && (
+              <div className="mx-4 my-3 p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/90 backdrop-blur-md flex-shrink-0">
+                <div className="flex items-center justify-between text-xs mb-1.5">
+                  <span className="text-slate-400 flex items-center gap-1.5 text-[11px]">
+                    <span className="w-2 h-2 rounded-full bg-mint-accent animate-ping flex-shrink-0" />
+                    Pipeline Ingestion
+                  </span>
+                  <span className="text-mint-accent font-mono text-[11px]">99.98% OK</span>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-lg font-grotesk font-semibold text-white tracking-tight">
+                    {counts.totalIngested.toLocaleString()}
+                  </span>
+                  <span className="text-[11px] font-mono text-cyan-accent">{counts.pipelineLatency}ms latency</span>
+                </div>
+              </div>
+            )}
+
+            {/* Navigation Links */}
+            <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto">
+              {navItems.map((item) => {
+                const isActive = currentView === item.id;
+                const IconComponent = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setCurrentView(item.id)}
+                    className={`group relative w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-left transition-all duration-200 ${
+                      isActive 
+                        ? 'bg-slate-800/80 text-white font-medium border border-cyan-accent/50 shadow-glow-cyan' 
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                    }`}
+                  >
+                    {isActive && (
+                      <span className="absolute left-0 top-2 bottom-2 w-1.5 rounded-r bg-cyan-accent shadow-[0_0_12px_#00f2fe]" />
+                    )}
+                    <div className={`p-1 rounded-lg transition-colors flex-shrink-0 ${isActive ? 'text-cyan-accent bg-cyan-accent/10' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                      <IconComponent />
+                    </div>
+                    {!sidebarCollapsed && (
+                      <div className="flex-1 flex items-center justify-between overflow-hidden min-w-0">
+                        <span className="text-sm truncate">{item.label}</span>
+                        {item.badge && (
+                          <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border flex-shrink-0 ml-1.5 ${
+                            isActive 
+                              ? 'bg-cyan-accent/20 border-cyan-accent/40 text-cyan-accent' 
+                              : 'bg-slate-800 border-slate-700 text-slate-400'
+                          }`}>
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* User & Model Config footer */}
+            <div className="p-4 border-t border-slate-800/80 bg-slate-950/60 flex-shrink-0">
+              {!sidebarCollapsed ? (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5 overflow-hidden">
+                    <div className="w-8 h-8 rounded-full bg-violet-accent/20 border border-violet-accent/40 flex items-center justify-center text-xs font-mono font-bold text-violet-300 flex-shrink-0">
+                      G
+                    </div>
+                    <div className="flex flex-col text-xs truncate">
+                      <span className="font-medium text-slate-200 truncate">Executive Lab #4</span>
+                    </div>
+                  </div>
+                  <div className="h-2 w-2 rounded-full bg-mint-accent flex-shrink-0" title="Telemetry sync connected" />
+                </div>
+              ) : (
+                <div className="flex justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-mint-accent" />
+                </div>
+              )}
+            </div>
+          </aside>
+
+          {/* Main Content Viewport */}
+          <main className="flex-1 min-w-0 flex flex-col min-h-screen overflow-y-auto">
+            {/* Top Header Bar */}
+            <header className="sticky top-0 z-20 bg-[#05070e]/90 backdrop-blur-md border-b border-slate-800/80 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center space-x-3 flex-wrap gap-y-2">
+                <span className="text-xs font-mono text-cyan-accent uppercase tracking-widest bg-cyan-accent/10 px-2.5 py-1 rounded-md border border-cyan-accent/30 whitespace-nowrap">
+                  EPISODIC MEMORY RECALL PROTOCOL
+                </span>
+                <span className="text-slate-600 hidden sm:inline">/</span>
+                <h1 className="text-sm font-grotesk font-semibold text-slate-200 whitespace-nowrap">
+                  {navItems.find(n => n.id === currentView)?.label}
+                </h1>
+              </div>
+
+              {/* Quick Actions & Live Pulse */}
+              <div className="flex items-center flex-wrap gap-3 text-xs font-mono">
+                <div className="hidden lg:flex items-center space-x-2 bg-slate-900/80 border border-slate-800 px-3 py-1.5 rounded-lg text-slate-300">
+                  <span className="text-slate-400">Target corpus:</span>
+                  <span className="text-white font-medium">350,000+ Unstructured Queries</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-slate-900/80 border border-slate-800 px-3 py-1.5 rounded-lg text-slate-300">
+                  <span className="inline-block w-2 h-2 rounded-full bg-cyan-accent animate-pulse" />
+                  <span className="text-slate-200">Auto-Stream Active</span>
+                </div>
+                <button 
+                  onClick={() => alert("Diagnostic trace exported: 350,720 events mapped with 98.4% taxonomy clustering confidence.")}
+                  className="px-3 py-1.5 rounded-lg bg-cyan-accent/15 border border-cyan-accent/40 text-cyan-accent hover:bg-cyan-accent/25 transition font-grotesk font-medium shadow-glow-cyan"
+                >
+                  Export Telemetry
+                </button>
+              </div>
+            </header>
+
+            {/* Body Content Area */}
+            <div className="flex-1 p-6 md:p-8 space-y-6 max-w-7xl w-full mx-auto pb-20">
+              {currentView === 'pipeline' && (
+                <PipelineView counts={counts} streamEvents={STREAM_EVENTS} onSelectCluster={() => setCurrentView('explorer')} />
+              )}
+              {currentView === 'explorer' && (
+                <ExplorerView 
+                  clusters={clustersData} 
+                  activeCluster={activeCluster} 
+                  onSelectCluster={(c) => setSelectedClusterId(c.id)} 
+                />
+              )}
+              {currentView === 'taxonomy' && (
+                <TaxonomyView onNavigateScorecard={() => setCurrentView('scorecard')} />
+              )}
+              {currentView === 'scorecard' && (
+                <ScorecardView clusters={clustersData} onDeepDive={(id) => { setSelectedClusterId(id); setCurrentView('explorer'); }} />
+              )}
+              {currentView === 'copilot' && (
+                <CopilotView clusters={clustersData} />
+              )}
+            </div>
+          </main>
+        </div>
+      );
+    }
+
+    // 1. LIVE DATA PIPELINE VIEW
+    function PipelineView({ counts, streamEvents, onSelectCluster }) {
+      const [filterSource, setFilterSource] = useState('ALL');
+
+      const filteredEvents = useMemo(() => {
+        if (filterSource === 'ALL') return streamEvents;
+        return streamEvents.filter(e => e.source.toLowerCase().includes(filterSource.toLowerCase()));
+      }, [filterSource, streamEvents]);
+
+      return (
+        <div className="space-y-6">
+          {/* Executive Overview banner */}
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-obsidian border border-slate-800 shadow-glass-edge">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-accent border border-cyan-500/40 uppercase font-semibold tracking-wider">
+                    Pipeline Engine Status: Nominal
+                  </span>
+                  <span className="text-xs text-slate-400">Stream ID: #PRD-PHOTOS-RECALL-904</span>
+                </div>
+                <h2 className="text-2xl font-grotesk font-bold text-white tracking-tight">
+                  Continuous Feedback Ingestion & Semantic Distillation
+                </h2>
+                <p className="text-sm text-slate-400 max-w-2xl leading-relaxed">
+                  Real-time pipeline aggregating unstructured complaints across global touchpoints to isolate where user memory cues diverge from Photos query resolution.
+                </p>
+              </div>
+              <div className="flex items-center gap-3 flex-shrink-0 flex-wrap">
+                <div className="px-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-right">
+                  <div className="text-[11px] text-slate-400 font-mono">LLM Extraction Rate</div>
+                  <div className="text-lg font-mono font-bold text-cyan-accent">48.2 docs/sec</div>
+                </div>
+                <div className="px-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-right">
+                  <div className="text-[11px] text-slate-400 font-mono">Clustering Confidence</div>
+                  <div className="text-lg font-mono font-bold text-mint-accent">97.8%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Ingestion Source Counters */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <IngestionCard 
+              title="Google Play Reviews" 
+              subtitle="1-star & 2-star search tags" 
+              count={counts.playStore} 
+              delta="+14.2% this week" 
+              accentColor="cyan"
+              icon="★"
+            />
+            <IngestionCard 
+              title="Reddit Forums" 
+              subtitle="r/googlephotos, r/Android" 
+              count={counts.reddit} 
+              delta="+8.6% this week" 
+              accentColor="violet"
+              icon="▲"
+            />
+            <IngestionCard 
+              title="X / Twitter Telemetry" 
+              subtitle="Verified search complaints" 
+              count={counts.twitter} 
+              delta="+22.1% this week" 
+              accentColor="fuchsia"
+              icon="✕"
+            />
+            <IngestionCard 
+              title="Support Communities" 
+              subtitle="Photos Community Help Tickets" 
+              count={counts.community} 
+              delta="+5.3% this week" 
+              accentColor="mint"
+              icon="◆"
+            />
+          </div>
+
+          {/* Visual Pipeline Architecture Flow */}
+          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl shadow-glass-edge space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-grotesk font-semibold text-white flex items-center gap-2">
+                  <Icons.Cpu />
+                  Multi-Stage Semantic Extraction Architecture
+                </h3>
+                <p className="text-xs text-slate-400">From raw human complaints to structured retrieval gap vectors</p>
+              </div>
+              <span className="text-xs font-mono text-slate-400 flex items-center gap-1.5 flex-shrink-0">
+                <span className="w-2 h-2 rounded-full bg-cyan-accent animate-pulse" />
+                Zero Backpressure
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+              <PipelineStage 
+                step="01" 
+                title="Omnichannel Ingestion" 
+                sub="App Store / Play Store / Reddit / X" 
+                detail="Raw natural language scraping, deduplication, sentiment & search intent filtering"
+                latency="18ms"
+                status="Healthy"
+              />
+              <PipelineStage 
+                step="02" 
+                title="Semantic Chunking" 
+                sub="Query vs Recollection" 
+                detail="Separates recalled perceptual cues (color, emotion) from user search attempt terms"
+                latency="34ms"
+                status="Active"
+              />
+              <PipelineStage 
+                step="03" 
+                title="High-Dim Embeddings" 
+                sub="Gemini Vector Space" 
+                detail="Projects user cognitive gap into 1,536-dimensional conceptual retrieval space"
+                latency="52ms"
+                status="Active"
+              />
+              <PipelineStage 
+                step="04" 
+                title="Taxonomy & Synthesis" 
+                sub="Actionable PM Insights" 
+                detail="Auto-aggregates friction points into priority opportunity scores and PRD hypotheses"
+                latency="38ms"
+                status="Completed"
+              />
+            </div>
+          </div>
+
+          {/* Scrolling Terminal Live Transformation Feed */}
+          <div className="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 backdrop-blur-xl shadow-glass-edge space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-accent border border-cyan-500/20 flex-shrink-0">
+                  <Icons.Terminal />
+                </div>
+                <div>
+                  <h3 className="text-sm font-grotesk font-semibold text-white tracking-wide">
+                    Live Telemetry Stream: Raw Quote → JSON Extracted Problem
+                  </h3>
+                  <p className="text-xs text-slate-400">Watching live inference parser transform qualitative anguish into metric tokens</p>
+                </div>
+              </div>
+
+              {/* Source Filters */}
+              <div className="flex items-center space-x-1.5 bg-slate-900 border border-slate-800 rounded-lg p-1 text-xs font-mono flex-shrink-0">
+                {['ALL', 'App Store', 'Play Store', 'Reddit', 'X', 'Forum'].map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => setFilterSource(tag)}
+                    className={`px-2.5 py-1 rounded transition ${
+                      filterSource === tag ? 'bg-cyan-accent/20 text-cyan-accent border border-cyan-accent/40 font-semibold' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Stream Entries */}
+            <div className="max-h-[380px] overflow-y-auto space-y-3 p-1 pr-2">
+              {filteredEvents.map((item) => (
+                <div key={item.id} className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-cyan-accent/40 transition">
+                  <div className="flex flex-wrap items-center justify-between text-xs font-mono mb-2 gap-2">
+                    <span className="text-slate-400 flex items-center gap-2 flex-wrap">
+                      <span className="text-cyan-accent font-semibold">{item.timestamp}</span>
+                      <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">{item.source}</span>
+                    </span>
+                    <span className="text-fuchsia-accent font-semibold">
+                      Severity: {(item.transformation.severityScore * 10).toFixed(1)}/10
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* Left: Raw verbatim human complaint */}
+                    <div className="p-3 rounded-lg bg-black/40 border border-slate-800/80 flex flex-col justify-between">
+                      <div className="text-[11px] font-mono text-slate-400 mb-1 flex items-center justify-between">
+                        <span>RAW USER VERBATIM</span>
+                        <span className="text-rose-400/80">Failed Retrieval Session</span>
+                      </div>
+                      <p className="text-xs text-slate-200 italic leading-relaxed">
+                        "{item.rawQuote}"
+                      </p>
+                    </div>
+
+                    {/* Right: Real-time LLM structured extraction */}
+                    <div className="p-3 rounded-lg bg-cyan-950/20 border border-cyan-900/40 text-xs font-mono space-y-1">
+                      <div className="text-[11px] text-cyan-accent mb-1 font-semibold flex items-center justify-between">
+                        <span>EXTRACTED RETRIEVAL VECTOR (JSON)</span>
+                        <span className="text-slate-400">Cosine: {item.transformation.vectorDistance}</span>
+                      </div>
+                      <div className="text-slate-300 space-y-0.5">
+                        <div><span className="text-cyan-400">"problem"</span>: <span className="text-amber-200">"{item.transformation.problem}"</span>,</div>
+                        <div><span className="text-cyan-400">"cluster"</span>: <span className="text-emerald-300">"{item.transformation.category}"</span>,</div>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-cyan-400">"recalled_tokens"</span>: [
+                          {item.transformation.intentTokens.map((t, idx) => (
+                            <span key={idx} className="bg-slate-800 text-slate-200 px-1 rounded text-[10px]">"{t}"{idx < item.transformation.intentTokens.length - 1 ? ',' : ''}</span>
+                          ))}
+                          ]
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-3 border-t border-slate-800/60 flex flex-wrap items-center justify-between text-xs text-slate-400 font-mono gap-2">
+              <span>Displaying latest 5 high-salience vectors in FIFO stream</span>
+              <button 
+                onClick={onSelectCluster}
+                className="text-cyan-accent hover:underline flex items-center gap-1"
+              >
+                Inspect Clustered Problem Spaces <Icons.ChevronRight />
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function IngestionCard({ title, subtitle, count, delta, accentColor, icon }) {
+      const colorMap = {
+        cyan: 'text-cyan-accent border-cyan-accent/30 bg-cyan-500/10 shadow-glow-cyan',
+        violet: 'text-violet-accent border-violet-accent/30 bg-violet-500/10 shadow-glow-violet',
+        fuchsia: 'text-fuchsia-accent border-fuchsia-accent/30 bg-fuchsia-500/10 shadow-glow-fuchsia',
+        mint: 'text-mint-accent border-mint-accent/30 bg-mint-500/10'
+      };
+
+      return (
+        <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition backdrop-blur-xl group flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-mono text-slate-400 truncate pr-2">{subtitle}</span>
+              <div className={`w-7 h-7 rounded-lg border flex items-center justify-center text-xs font-mono flex-shrink-0 ${colorMap[accentColor]}`}>
+                {icon}
+              </div>
+            </div>
+            <div className="text-2xl font-grotesk font-bold text-white tracking-tight mb-1 font-mono-code">
+              {count.toLocaleString()}
+            </div>
+          </div>
+          <div className="flex items-center justify-between text-xs pt-1">
+            <span className="text-slate-300 font-medium truncate pr-1">{title}</span>
+            <span className="text-mint-accent font-mono text-[11px] flex-shrink-0">{delta}</span>
+          </div>
+        </div>
+      );
+    }
+
+    function PipelineStage({ step, title, sub, detail, latency, status }) {
+      return (
+        <div className="p-4 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-slate-700 transition flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between text-xs font-mono mb-2">
+              <span className="text-slate-500 font-bold">{step}</span>
+              <span className="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-cyan-accent font-semibold">{latency}</span>
+            </div>
+            <h4 className="text-sm font-grotesk font-bold text-slate-100">{title}</h4>
+            <span className="text-[11px] text-slate-400 font-mono block mb-2">{sub}</span>
+            <p className="text-xs text-slate-400 leading-relaxed">{detail}</p>
+          </div>
+          <div className="mt-3 pt-2.5 border-t border-slate-800/60 flex items-center justify-between text-[11px]">
+            <span className="text-slate-500">Status</span>
+            <span className="text-mint-accent font-mono font-medium flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-mint-accent" />
+              {status}
+            </span>
+          </div>
+        </div>
+      );
+    }
+
+    // 2. DISCOVERY ENGINE EXPLORER
+    function ExplorerView({ clusters, activeCluster, onSelectCluster }) {
+      return (
+        <div className="space-y-6">
+          {/* Header Description */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-glass-edge">
+            <div>
+              <div className="text-xs font-mono text-cyan-accent uppercase tracking-wider mb-1 font-semibold">
+                UNSUPERVISED CLUSTERING / T-SNE PROJECTION
+              </div>
+              <h2 className="text-2xl font-grotesk font-bold text-white">
+                Episodic Memory Retrieval Opportunity Clusters
+              </h2>
+              <p className="text-sm text-slate-400 mt-1">
+                Visualizing why photo retrieval collapses when user episodic memory cannot resolve into keyword tokens.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-xs font-mono text-slate-400">Total Analyzed Friction:</span>
+              <span className="text-base font-grotesk font-bold text-white bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                15,380 Verified Failures
+              </span>
+            </div>
+          </div>
+
+          {/* Interactive Scatter Bubble Canvas + Detail Panel */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Cluster Bubble Matrix Canvas (Left 7 Cols) */}
+            <div className="lg:col-span-7 bg-[#0b0f19]/80 border border-slate-800 rounded-2xl p-6 min-h-[460px] flex flex-col justify-between shadow-glass-edge">
+              <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                  <div>
+                    <h3 className="text-sm font-grotesk font-semibold text-white">
+                      Opportunity Cluster Matrix (Volume vs Emotional Severity)
+                    </h3>
+                    <p className="text-xs text-slate-400">Click a bubble node to inspect raw verbatim telemetry & extracted gaps</p>
+                  </div>
+                  <div className="text-xs font-mono text-slate-400 flex-shrink-0">
+                    Size = Volume
+                  </div>
+                </div>
+
+                {/* SVG Visual Cluster Graph Representation */}
+                <div className="relative w-full h-[360px] rounded-xl bg-slate-950/70 border border-slate-800 overflow-hidden p-6 flex flex-col justify-between">
+                  {/* Axis indicators */}
+                  <div className="absolute top-3 left-4 text-[10px] font-mono text-slate-500 uppercase tracking-wider z-0">
+                    ↑ High Emotional Pain (Abandonment / Despair)
+                  </div>
+                  <div className="absolute bottom-3 right-4 text-[10px] font-mono text-slate-500 uppercase tracking-wider z-0">
+                    Query Complaint Volume →
+                  </div>
+
+                  {/* Grid lines */}
+                  <div className="absolute inset-0 flex flex-col justify-between pointer-events-none p-6">
+                    <div className="border-b border-slate-800/40 w-full" />
+                    <div className="border-b border-slate-800/40 w-full" />
+                    <div className="border-b border-slate-800/40 w-full" />
+                  </div>
+
+                  {/* Interactive Nodes Placed by Metrics */}
+                  <div className="relative w-full h-full">
+                    {clusters.map((cluster) => {
+                      const isSelected = cluster.id === activeCluster.id;
+                      
+                      const xPos = Math.min(85, Math.max(12, ((cluster.volume - 1500) / 3200) * 75 + 12));
+                      const yPos = Math.min(85, Math.max(15, (5.0 - cluster.severity) * 60 + 15));
+                      const size = Math.min(95, Math.max(55, (cluster.volume / 4520) * 85));
+
+                      return (
+                        <button
+                          key={cluster.id}
+                          onClick={() => onSelectCluster(cluster)}
+                          style={{
+                            left: `${xPos}%`,
+                            top: `${yPos}%`,
+                            width: `${size}px`,
+                            height: `${size}px`,
+                            transform: 'translate(-50%, -50%)'
+                          }}
+                          className={`absolute rounded-full transition-all duration-300 flex flex-col items-center justify-center p-2 text-center group cursor-pointer ${
+                            isSelected 
+                              ? 'border-2 border-cyan-accent shadow-[0_0_25px_rgba(0,242,254,0.45)] scale-110 z-20' 
+                              : 'border border-white/20 hover:border-cyan-accent/60 hover:scale-105 z-10'
+                          }`}
+                        >
+                          <div 
+                            className="absolute inset-0 rounded-full opacity-35 group-hover:opacity-60 transition"
+                            style={{ backgroundColor: cluster.color }}
+                          />
+                          <span className="relative z-10 text-[10px] font-mono font-bold text-white truncate max-w-[90%]">
+                            {cluster.name.split(' ')[0]}
+                          </span>
+                          <span className="relative z-10 text-[9px] font-mono text-cyan-accent">
+                            {cluster.volume}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Cluster quick-select pills */}
+              <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto pb-1">
+                {clusters.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => onSelectCluster(c)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-mono whitespace-nowrap transition flex items-center gap-2 flex-shrink-0 ${
+                      c.id === activeCluster.id 
+                        ? 'bg-cyan-accent/20 border border-cyan-accent text-cyan-accent font-semibold' 
+                        : 'bg-slate-800/60 border border-slate-700/60 text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: c.color }} />
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Selected Cluster Detail Pane (Right 5 Cols) */}
+            <div className="lg:col-span-5 bg-[#0b0f19]/80 border border-slate-800 rounded-2xl p-6 flex flex-col max-h-[700px] overflow-y-auto space-y-5 shadow-glass-edge">
+              <div>
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+                  <span className="text-xs font-mono uppercase tracking-wider text-cyan-accent flex items-center gap-1.5 font-semibold">
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: activeCluster.color }} />
+                    {activeCluster.category} Cluster Diagnostic
+                  </span>
+                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                    Score: {activeCluster.composite} / 100
+                  </span>
+                </div>
+
+                <h3 className="text-xl font-grotesk font-bold text-white mb-2">
+                  {activeCluster.name}
+                </h3>
+                <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                  {activeCluster.description}
+                </p>
+
+                {/* Key Metrics row */}
+                <div className="grid grid-cols-3 gap-2 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 mb-4 text-center">
+                  <div>
+                    <div className="text-[10px] text-slate-500 font-mono">Volume Impact</div>
+                    <div className="text-sm font-mono font-bold text-white">{activeCluster.volume} reports</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-slate-500 font-mono">Severity</div>
+                    <div className="text-sm font-mono font-bold text-fuchsia-accent">{activeCluster.severity} / 5.0</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-slate-500 font-mono">Feasibility</div>
+                    <div className="text-sm font-mono font-bold text-mint-accent">{activeCluster.feasibility} / 5.0</div>
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <div className="text-[11px] font-mono text-cyan-accent mb-1 uppercase font-semibold">
+                    Core Proxy Indicator
+                  </div>
+                  <div className="text-xs text-slate-200 bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/60 font-mono">
+                    ⚠️ {activeCluster.proxyMetric}
+                  </div>
+                </div>
+
+                {/* Top Verbatim Quotes */}
+                <div>
+                  <div className="text-xs font-grotesk font-semibold text-white mb-2 flex items-center justify-between">
+                    <span>Ranked User Verbatims (by Emotional Friction)</span>
+                    <span className="text-[10px] font-mono text-slate-500">{activeCluster.topQuotes.length} quotes</span>
+                  </div>
+
+                  <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+                    {activeCluster.topQuotes.map((q, idx) => (
+                      <div key={idx} className="p-3 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-slate-700 transition space-y-1">
+                        <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                          <span className="text-cyan-accent">{q.source}</span>
+                          <span className={`px-1.5 py-0.5 rounded font-semibold ${
+                            q.emotionalSeverity === 'Critical' ? 'bg-rose-500/20 text-rose-300' : 'bg-amber-500/20 text-amber-300'
+                          }`}>
+                            {q.emotionalSeverity} • {q.searchAttempts} Attempts
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-300 italic">
+                          "{q.text}"
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-mono">Priority Tier: Tier 1 Strategic</span>
+                <button 
+                  onClick={() => alert(`PRD Generation triggered for ${activeCluster.name}. AI drafting retrieval hypothesis & embedding schema.`)}
+                  className="px-3.5 py-1.5 rounded-lg bg-cyan-accent text-slate-950 font-bold hover:bg-cyan-300 transition shadow-glow-cyan"
+                >
+                  Generate PRD Hypothesis
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 3. FRICTION TAXONOMY INSIGHTS
+    function TaxonomyView({ onNavigateScorecard }) {
+      const taxonomyGaps = [
+        {
+          stage: '1. Expression Gap',
+          tag: 'Recollection Vocabulary Barrier',
+          color: '#00f2fe',
+          userState: 'User remembers sensory cues ("that yellow coffee mug at grandma\'s kitchen table")',
+          systemState: 'Search bar expects concise objective tags or entities ("mug", "kitchen")',
+          frictionRate: '38.4% of sessions drop here',
+          proxyMetrics: [
+            { label: 'Zero-result rate on multi-adjective memory queries', val: '47.2%' },
+            { label: 'Session abandonment within 10 seconds of 1st query', val: '29.1%' }
+          ]
+        },
+        {
+          stage: '2. Intent Understanding Gap',
+          tag: 'Semantic & Temporal Decoupling',
+          color: '#8b5cf6',
+          userState: 'User enters "photo before flight to Hawaii" (relative episodic anchor)',
+          systemState: 'NLP tokenizes "flight" and "Hawaii", missing the temporal precedence relation',
+          frictionRate: '28.1% of drop-offs',
+          proxyMetrics: [
+            { label: 'Search failure when relative temporal prepositions used ("before", "during")', val: '64.8%' },
+            { label: 'Reformulation rate (typing 3+ variations within 60s)', val: '53.6%' }
+          ]
+        },
+        {
+          stage: '3. Result Presentation Gap',
+          tag: 'Infinite Scroll Fatigue',
+          color: '#ec4899',
+          userState: 'User searches "sunset beach" and receives 4,800 unclustered chronological thumbnails',
+          systemState: 'Linear thumbnail grid without smart episodic clustering or contextual filters',
+          frictionRate: '19.5% of drop-offs',
+          proxyMetrics: [
+            { label: 'Sessions where user scrolls >50 screens without tapping a photo', val: '31.2%' },
+            { label: 'Average time to retrieval abandonment', val: '142 seconds' }
+          ]
+        },
+        {
+          stage: '4. Refinement Gap',
+          tag: 'Zero Conversational Pivoting',
+          color: '#10b981',
+          userState: 'User realizes query was too broad, but has no tools to say "No, not this beach trip, the other one with the campfire"',
+          systemState: 'Binary text bar; no interactive contrastive search or negative prompting',
+          frictionRate: '14.0% of drop-offs',
+          proxyMetrics: [
+            { label: '% of failed sessions where user explicitly clears search box and leaves', val: '72.4%' },
+            { label: 'Use of secondary filter chips (People, Favorites)', val: '< 6.8%' }
+          ]
+        }
+      ];
+
+      return (
+        <div className="space-y-6">
+          {/* Section Heading */}
+          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-glass-edge">
+            <div className="text-xs font-mono text-cyan-accent uppercase tracking-wider mb-1 font-semibold">
+              METRIC DECOMPOSITION & JOURNEY FUNNEL
+            </div>
+            <h2 className="text-2xl font-grotesk font-bold text-white">
+              The 4 Core Failure Gaps in Episodic Photo Search
+            </h2>
+            <p className="text-sm text-slate-400 mt-1">
+              Decomposing search abandonment into architectural failure modes across the user cognitive journey.
+            </p>
+          </div>
+
+          {/* Funnel Flow Section */}
+          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl shadow-glass-edge space-y-4">
+            <div>
+              <h3 className="text-sm font-grotesk font-semibold text-white mb-1">
+                Failed Search Session Flow & Cumulative Attrition
+              </h3>
+              <p className="text-xs text-slate-400">
+                100,000 ambiguous memory retrieval attempts traced across the 4 decomposition stages
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { label: '1. Initiation', users: '100,000', drop: '38,400 Drop', barH: '100%', color: 'from-cyan-500 to-cyan-700' },
+                { label: '2. Intent Parse', users: '61,600', drop: '28,100 Drop', barH: '61.6%', color: 'from-violet-500 to-violet-700' },
+                { label: '3. Presentation', users: '33,500', drop: '19,500 Drop', barH: '33.5%', color: 'from-fuchsia-500 to-fuchsia-700' },
+                { label: '4. Refinement', users: '14,000', drop: '14,000 Abandon', barH: '14.0%', color: 'from-rose-500 to-rose-700' }
+              ].map((step, i) => (
+                <div key={i} className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span className="text-xs font-mono text-slate-400 font-semibold">{step.label}</span>
+                    <div className="text-xl font-grotesk font-bold text-white mt-1">{step.users}</div>
+                    <span className="text-[11px] font-mono text-rose-400">{step.drop}</span>
+                  </div>
+                  <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-4">
+                    <div 
+                      className={`h-full bg-gradient-to-r ${step.color} rounded-full`}
+                      style={{ width: step.barH }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 4 Cards Breaking Down Core Gaps */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {taxonomyGaps.map((gap, idx) => (
+              <div key={idx} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 backdrop-blur-xl shadow-glass-edge transition flex flex-col justify-between space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">
+                      {gap.stage}
+                    </span>
+                    <span className="text-xs font-mono text-rose-400 font-semibold">{gap.frictionRate}</span>
+                  </div>
+
+                  <h3 className="text-lg font-grotesk font-bold text-white mb-3">
+                    {gap.tag}
+                  </h3>
+
+                  {/* Contrast User vs System */}
+                  <div className="space-y-2 mb-4">
+                    <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800/80 text-xs">
+                      <span className="text-cyan-accent font-mono block text-[10px] uppercase font-bold mb-1">
+                        Cognitive Memory State:
+                      </span>
+                      <p className="text-slate-300 italic leading-relaxed">"{gap.userState}"</p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800/80 text-xs">
+                      <span className="text-fuchsia-accent font-mono block text-[10px] uppercase font-bold mb-1">
+                        Current System Limitation:
+                      </span>
+                      <p className="text-slate-300 leading-relaxed">{gap.systemState}</p>
+                    </div>
+                  </div>
+
+                  {/* Underlying proxy metrics */}
+                  <div>
+                    <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block mb-2 font-semibold">
+                      Underlying Proxy Metrics
+                    </span>
+                    <div className="space-y-2">
+                      {gap.proxyMetrics.map((m, mIdx) => (
+                        <div key={mIdx} className="flex items-center justify-between text-xs p-2 rounded bg-slate-800/40 border border-slate-800 gap-2">
+                          <span className="text-slate-300 truncate">{m.label}</span>
+                          <span className="font-mono font-bold text-cyan-accent flex-shrink-0">{m.val}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+                  <span className="text-slate-500 font-mono truncate pr-2">Hypothesis: Dynamic RAG grounding</span>
+                  <button 
+                    onClick={onNavigateScorecard}
+                    className="text-cyan-accent hover:underline flex items-center gap-1 font-mono text-[11px] flex-shrink-0"
+                  >
+                    View Scorecard →
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // 4. OPPORTUNITY SCORECARD
+    function ScorecardView({ clusters, onDeepDive }) {
+      const [sortBy, setSortBy] = useState('composite');
+      const [sortAsc, setSortAsc] = useState(false);
+
+      const sortedClusters = useMemo(() => {
+        return [...clusters].sort((a, b) => {
+          let valA = a[sortBy];
+          let valB = b[sortBy];
+          if (sortAsc) return valA > valB ? 1 : -1;
+          return valA < valB ? 1 : -1;
+        });
+      }, [clusters, sortBy, sortAsc]);
+
+      const handleSort = (field) => {
+        if (sortBy === field) {
+          setSortAsc(!sortAsc);
+        } else {
+          setSortBy(field);
+          setSortAsc(false);
+        }
+      };
+
+      return (
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-glass-edge flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="text-xs font-mono text-cyan-accent uppercase tracking-wider mb-1 font-semibold">
+                QUANTITATIVE STRATEGIC ROADMAP
+              </div>
+              <h2 className="text-2xl font-grotesk font-bold text-white">
+                ML Product Opportunity Scorecard
+              </h2>
+              <p className="text-sm text-slate-400 mt-1">
+                Mathematical ranking derived from Volume, Severity, Uniqueness, and Technical Feasibility weights.
+              </p>
+            </div>
+            <div className="px-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-xs font-mono text-slate-300 flex-shrink-0">
+              Score = <span className="text-cyan-accent font-semibold">(Vol×0.3)</span> + <span className="text-fuchsia-accent font-semibold">(Sev×0.35)</span> + <span className="text-violet-accent font-semibold">(Uniq×0.15)</span> + <span className="text-mint-accent font-semibold">(Feas×0.20)</span>
+            </div>
+          </div>
+
+          {/* Sortable Table Wrapped with explicit spacing */}
+          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl shadow-glass-edge overflow-hidden">
+            <div className="overflow-x-auto rounded-xl border border-slate-800/80">
+              <table className="w-full text-left border-collapse min-w-[760px]">
+                <thead>
+                  <tr className="border-b border-slate-800 text-[11px] font-mono text-slate-400 uppercase tracking-wider bg-slate-950/50">
+                    <th className="py-3.5 px-4 w-72">Opportunity Cluster</th>
+                    <th className="py-3.5 px-4 cursor-pointer hover:text-white" onClick={() => handleSort('volume')}>
+                      Volume {sortBy === 'volume' ? (sortAsc ? '↑' : '↓') : ''}
+                    </th>
+                    <th className="py-3.5 px-4 cursor-pointer hover:text-white" onClick={() => handleSort('severity')}>
+                      Severity (1-5) {sortBy === 'severity' ? (sortAsc ? '↑' : '↓') : ''}
+                    </th>
+                    <th className="py-3.5 px-4 cursor-pointer hover:text-white" onClick={() => handleSort('uniqueness')}>
+                      Uniqueness {sortBy === 'uniqueness' ? (sortAsc ? '↑' : '↓') : ''}
+                    </th>
+                    <th className="py-3.5 px-4 cursor-pointer hover:text-white" onClick={() => handleSort('feasibility')}>
+                      Feasibility {sortBy === 'feasibility' ? (sortAsc ? '↑' : '↓') : ''}
+                    </th>
+                    <th className="py-3.5 px-4 cursor-pointer hover:text-cyan-accent text-right" onClick={() => handleSort('composite')}>
+                      Composite Score {sortBy === 'composite' ? (sortAsc ? '↑' : '↓') : ''}
+                    </th>
+                    <th className="py-3.5 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 text-xs">
+                  {sortedClusters.map((c, i) => (
+                    <tr key={c.id} className="hover:bg-slate-800/40 transition group">
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono text-slate-500 font-bold w-5">0{i + 1}</span>
+                          <div>
+                            <div className="font-grotesk font-bold text-white group-hover:text-cyan-accent transition flex items-center gap-2">
+                              {c.name}
+                              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 flex-shrink-0">
+                                {c.category}
+                              </span>
+                            </div>
+                            <span className="text-[11px] text-slate-400 line-clamp-1">{c.description}</span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Volume */}
+                      <td className="py-3.5 px-4 font-mono">
+                        <div className="flex items-center gap-2">
+                          <span className="text-white font-semibold w-12">{c.volume}</span>
+                          <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden flex-shrink-0">
+                            <div className="h-full bg-cyan-accent rounded-full" style={{ width: `${(c.volume / 4600) * 100}%` }} />
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Severity */}
+                      <td className="py-3.5 px-4 font-mono">
+                        <div className="flex items-center gap-2">
+                          <span className="text-fuchsia-accent font-bold w-7">{c.severity}</span>
+                          <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden flex-shrink-0">
+                            <div className="h-full bg-fuchsia-accent rounded-full" style={{ width: `${(c.severity / 5) * 100}%` }} />
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Uniqueness */}
+                      <td className="py-3.5 px-4 font-mono">
+                        <div className="flex items-center gap-2">
+                          <span className="text-violet-accent w-7">{c.uniqueness}</span>
+                          <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden flex-shrink-0">
+                            <div className="h-full bg-violet-accent rounded-full" style={{ width: `${(c.uniqueness / 5) * 100}%` }} />
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Feasibility */}
+                      <td className="py-3.5 px-4 font-mono">
+                        <div className="flex items-center gap-2">
+                          <span className="text-mint-accent w-7">{c.feasibility}</span>
+                          <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden flex-shrink-0">
+                            <div className="h-full bg-mint-accent rounded-full" style={{ width: `${(c.feasibility / 5) * 100}%` }} />
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Composite Score */}
+                      <td className="py-3.5 px-4 text-right">
+                        <span className="text-sm font-mono font-bold text-cyan-accent px-2.5 py-1 rounded-lg bg-cyan-950/60 border border-cyan-800/40 inline-block">
+                          {c.composite.toFixed(1)}
+                        </span>
+                      </td>
+
+                      {/* Action */}
+                      <td className="py-3.5 px-4 text-right">
+                        <button 
+                          onClick={() => onDeepDive(c.id)}
+                          className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-[11px] transition"
+                        >
+                          Deep Dive
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 5. PM DISCOVERY AI COPILOT
+    function CopilotView({ clusters }) {
+      const [messages, setMessages] = useState([
+        {
+          sender: 'ai',
+          text: "I am the Google Photos Discovery Engine Copilot. I have indexed 350,720 qualitative feedback logs, zero-result search telemetry, and multi-modal clustering graphs. What product hypothesis or retrieval gap would you like to investigate?",
+          stats: [
+            { label: 'Indexed Reports', val: '350.7k' },
+            { label: 'Active Memory Vectors', val: '1,536-dim' },
+            { label: 'Confidence Score', val: '99.4%' }
+          ]
+        },
+        {
+          sender: 'user',
+          text: "Show me complaints where users tried searching by color but failed"
+        },
+        {
+          sender: 'ai',
+          text: "Found 1,840 high-confidence complaints specifically detailing color-cue retrieval failures. In 78% of these cases, the user recalled a vivid contrasting color of a garment, vehicle, or animal, but Photos treated the color keyword as a global image tint or background ambiance.",
+          evidenceQuotes: [
+            {
+              quote: "Trying to find a photo of my mom's handmade blue quilt. Typed 'blue handmade quilt'. Shows pictures of blue skies, beds, and random blankets.",
+              source: "Reddit r/googlephotos",
+              extractedIntent: "Subject-bound color binding failed ('quilt' color was extracted as scenery)"
+            },
+            {
+              quote: "Searched 'mustard jacket' to find my brother at the airport. Got zero results because jacket was labeled generally as 'clothing'.",
+              source: "App Store Review v6.75",
+              extractedIntent: "Fine-grained chromatic attribute resolution defect"
+            }
+          ],
+          recommendation: "Product Recommendation: Implement localized visual bounding tokenization so color adjectives strictly bind to the adjacent noun token rather than diffusing across the entire image embedding."
+        }
+      ]);
+
+      const [inputValue, setInputValue] = useState('');
+      const [isThinking, setIsThinking] = useState(false);
+      const chatEndRef = useRef(null);
+
+      const scrollToBottom = () => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      };
+
+      useEffect(() => {
+        scrollToBottom();
+      }, [messages, isThinking]);
+
+      const exampleChips = [
+        "What kinds of old photos do users struggle to retrieve?",
+        "What information do people actually remember about a photo?",
+        "What information have they forgotten?",
+        "How do users formulate searches when their memory is incomplete?"
+      ];
+
+      const handleSend = (text) => {
+        const query = text || inputValue;
+        if (!query.trim()) return;
+
+        const newMessages = [...messages, { sender: 'user', text: query }];
+        setMessages(newMessages);
+        setInputValue('');
+        setIsThinking(true);
+
+        setTimeout(() => {
+          let reply = {
+            sender: 'ai',
+            text: `Analyzing 350,720 records for: "${query}". No specific insights found.`
+          };
+
+          if (query.toLowerCase().includes('top complaints') || query.toLowerCase().includes('what are top complaints')) {
+            reply = {
+              sender: 'ai',
+              text: `Analyzing 350,720 records for: "${query}". Cross-referencing unsupervised t-SNE clusters and session abandonment logs.`,
+              evidenceQuotes: [
+                {
+                  quote: "I remember the photo was at a beach sunset, but searching 'beach' gives me 5,000 photos. When I typed 'beach red bucket dog sunset' it gave me 2 completely unrelated pictures. I gave up.",
+                  source: "Customer Study P-104",
+                  extractedIntent: "Conjunctive query precision decay"
+                }
+              ],
+              recommendation: "Engine Insight: Users construct episodic mental models through relational anchors. We need a 'Conversational Refinement' paradigm rather than a one-shot rigid keyword parser."
+            };
+          } else if (query.toLowerCase().includes('temporal') || query.toLowerCase().includes('college')) {
+            reply = {
+              sender: 'ai',
+              text: "Temporal memory anchors are present in 26.4% of failed queries. Humans do not remember exact calendar timestamps (e.g. 'Oct 14, 2021'); they encode episodic life milestones relative to anchor events ('right after lockdown', 'freshman year').",
+              evidenceQuotes: [
+                {
+                  quote: "Why can't I search 'that concert right before COVID started'? I don't remember if it was Feb or March 2020!",
+                  source: "Reddit r/googlephotos",
+                  extractedIntent: "Relative episodic temporal anchor unresolvable by Gregorian calendar index"
+                }
+              ],
+              recommendation: "Hypothesis: Expose an 'Episodic Anchor Layer' that maps user photo clustering to broad cultural, geographical, and life-event horizons."
+            };
+          } else if (query.toLowerCase().includes('remember') || query.toLowerCase().includes('information do people actually remember')) {
+            reply = {
+              sender: 'ai',
+              text: "Based on memory classification of 350,720 queries, users primarily retain 'Episodic Anchors' rather than specific visual facts. The top retained memory dimensions are: 1) Spatial/Location (42%), 2) People/Social Context (28%), 3) Emotional State or Vibe (18%), and 4) Temporal anchors relative to life events (12%). Precise visual details (e.g., exact clothing colors, background objects) decay the fastest.",
+              evidenceQuotes: [
+                {
+                  quote: "I know we were at that cramped sushi place in Seattle and I was wearing something formal, but I can't remember what. It was raining.",
+                  source: "User Interview #42",
+                  extractedIntent: "Spatial anchor + Weather context > Visual details"
+                },
+                {
+                  quote: "I'm looking for the photo of my dog from when I first moved into my old apartment. I know I was feeling super overwhelmed.",
+                  source: "Reddit r/googlephotos",
+                  extractedIntent: "Emotional state + Relative temporal anchor"
+                }
+              ],
+              recommendation: "Product Recommendation: Shift indexing priorities. Instead of heavily weighting objective visual classification (e.g., 'tree', 'cat', 'red shirt'), boost RAG vectors based on inferred life-events, social clusters, and environmental ambiance/weather."
+            };
+          } else if (query.toLowerCase().includes('kinds of old photos') || query.toLowerCase().includes('struggle to retrieve')) {
+            reply = {
+              sender: 'ai',
+              text: "Analysis of abandonment logs reveals users struggle most with 3 categories: 1) Utilitarian captures (screenshots of recipes, parking spots, medical documents), 2) Ambient episodic memories (a vibe from a vacation without distinct landmarks), and 3) Visually ambiguous objects (a specific jacket in a crowded room). These fail because standard object-recognition over-indexes on prominent, common subjects rather than the user's personal context.",
+              evidenceQuotes: [
+                {
+                  quote: "I took a picture of my Wi-Fi password sticker on the router 3 years ago. Searched 'password', 'router', 'internet'. Nothing.",
+                  source: "App Store Review v6.75",
+                  extractedIntent: "Utilitarian retrieval failure due to missing OCR/context mapping"
+                }
+              ],
+              recommendation: "Hypothesis: Implement 'Personal Context Weighting' for document and ambient photo retrieval, moving beyond generic object tags."
+            };
+          } else if (query.toLowerCase().includes('forgotten')) {
+            reply = {
+              sender: 'ai',
+              text: "Users rapidly lose access to 'Machine-Indexable Attributes'. Within 6 months, 82% of users forget the exact calendar date of an event, and 65% forget specific visual details (e.g., whether they were indoors/outdoors, clothing colors, or exact background elements) that traditional computer vision relies on to filter results.",
+              evidenceQuotes: [
+                {
+                  quote: "I was looking for a picture of my cousin's baby shower. I know it was in the spring a few years ago. I kept typing 'spring baby shower pink' but nothing came up. I think she actually wore yellow.",
+                  source: "Customer Study P-112",
+                  extractedIntent: "Decay of precise visual attributes (color mismatch)"
+                }
+              ],
+              recommendation: "Engine Insight: Do not penalize search results for mismatched visual adjectives if the emotional or relational anchors (e.g., 'baby shower', 'cousin') match strongly."
+            };
+          } else if (query.toLowerCase().includes('formulate searches') || query.toLowerCase().includes('memory is incomplete')) {
+            reply = {
+              sender: 'ai',
+              text: "When memory is incomplete, users employ 'Iterative Refinement' strategies that current systems fail to support. They typically start with a broad anchor (e.g., 'Goa trip'), realize the result set is too large, and then attempt to append hyper-specific relational qualifiers (e.g., 'Goa trip red car raining'), resulting in immediate zero-result failures.",
+              evidenceQuotes: [
+                {
+                  quote: "Typed 'wedding' -> 2,000 photos. Typed 'wedding Mark 2018' -> 500 photos. Typed 'wedding Mark 2018 cake crying' -> 0 photos. I just gave up.",
+                  source: "User Interview #19",
+                  extractedIntent: "Conjunctive query collapse on multiple constraint combinations"
+                }
+              ],
+              recommendation: "Product Recommendation: Introduce a conversational refinement paradigm. Instead of failing a 4-term query, prompt the user: 'I found the wedding photos, but couldn't spot a cake. Showing all Mark's wedding photos instead.'"
+            };
+          }
+
+          setMessages(prev => [...prev, reply]);
+          setIsThinking(false);
+        }, 1200);
+      };
+
+      return (
+        <div className="h-[680px] flex flex-col space-y-4">
+          {/* Header */}
+          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 shadow-glass-edge flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-violet-500/20 border border-violet-500/40 flex items-center justify-center text-violet-300 flex-shrink-0">
+                <Icons.Bot />
+              </div>
+              <div className="truncate">
+                <h3 className="text-sm font-grotesk font-semibold text-white truncate">
+                  PM Discovery Copilot (RAG Telemetry Query Interface)
+                </h3>
+                <span className="text-[11px] text-slate-400 font-mono truncate block">
+                  Ground truth query engine backed by 350k+ raw user quotes & telemetry vectors
+                </span>
+              </div>
+            </div>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-mint-500/20 text-mint-accent border border-mint-500/30 flex-shrink-0">
+              Online • 99.8% Grounding
+            </span>
+          </div>
+
+          {/* Chat Window Container */}
+          <div className="flex-1 min-h-0 p-4 rounded-2xl bg-slate-950/70 border border-slate-800 backdrop-blur-xl shadow-glass-edge overflow-y-auto space-y-4">
+            {messages.map((m, idx) => (
+              <div key={idx} className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
+                <div className="text-[10px] font-mono text-slate-500 mb-1 px-1">
+                  {m.sender === 'user' ? 'Product Manager' : 'Discovery AI Engine'}
+                </div>
+                <div className={`max-w-2xl p-4 rounded-2xl text-xs leading-relaxed ${
+                  m.sender === 'user' 
+                    ? 'bg-cyan-500/20 border border-cyan-500/40 text-cyan-50 shadow-glow-cyan' 
+                    : 'bg-slate-900/90 border border-slate-800 text-slate-200'
+                }`}>
+                  <p className="whitespace-pre-wrap">{m.text}</p>
+
+                  {/* Telemetry Stats Chips if available */}
+                  {m.stats && (
+                    <div className="mt-3 pt-3 border-t border-slate-800 grid grid-cols-3 gap-2">
+                      {m.stats.map((s, sIdx) => (
+                        <div key={sIdx} className="bg-slate-950 p-2 rounded border border-slate-800/80 text-center">
+                          <span className="text-[10px] text-slate-500 font-mono block">{s.label}</span>
+                          <span className="text-xs font-mono font-bold text-cyan-accent">{s.val}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Evidence User Quotes */}
+                  {m.evidenceQuotes && (
+                    <div className="mt-3 space-y-2">
+                      <span className="text-[10px] font-mono text-slate-400 uppercase font-bold tracking-wider block">
+                        Verified Verbatim Evidence:
+                      </span>
+                      {m.evidenceQuotes.map((eq, qIdx) => (
+                        <div key={qIdx} className="p-3 rounded-lg bg-black/40 border border-slate-800/80 space-y-1">
+                          <p className="italic text-slate-300">"{eq.quote}"</p>
+                          <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 gap-2">
+                            <span className="text-cyan-accent">{eq.source}</span>
+                            <span className="text-amber-300/80 truncate">{eq.extractedIntent}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Strategic Recommendation */}
+                  {m.recommendation && (
+                    <div className="mt-3 p-2.5 rounded-lg bg-violet-950/30 border border-violet-800/40 text-violet-200">
+                      <span className="font-mono font-bold text-[10px] uppercase tracking-wider block text-violet-400 mb-0.5">
+                        Actionable PRD Direction:
+                      </span>
+                      {m.recommendation}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {isThinking && (
+              <div className="flex items-center space-x-2 text-xs font-mono text-cyan-accent p-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-accent animate-ping" />
+                <span>Scanning 1,536-dimensional vector index for user complaints...</span>
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+
+          {/* Example Chips */}
+          <div className="flex flex-wrap items-center gap-2 flex-shrink-0 text-xs">
+            <span className="text-slate-500 font-mono whitespace-nowrap text-[11px]">Suggested:</span>
+            {exampleChips.map((chip, cIdx) => (
+              <button
+                key={cIdx}
+                onClick={() => handleSend(chip)}
+                className="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-cyan-accent hover:border-cyan-accent/40 transition text-[11px] font-mono"
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
+
+          {/* Input Box */}
+          <div className="relative flex-shrink-0">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Ask the Google Photos Discovery Engine (e.g., 'What are the top complaints regarding vacation photos?')..."
+              className="w-full pl-4 pr-24 py-3 rounded-xl bg-slate-900/90 border border-slate-800 focus:border-cyan-accent focus:outline-none text-xs text-white placeholder-slate-500 font-sans shadow-glass-edge"
+            />
+            <button
+              onClick={() => handleSend()}
+              className="absolute right-1.5 top-1.5 bottom-1.5 px-4 rounded-lg bg-cyan-accent text-slate-950 font-bold hover:bg-cyan-300 transition flex items-center gap-1.5 text-xs shadow-glow-cyan"
+            >
+              <span>Query</span>
+              <Icons.Send />
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body></html>

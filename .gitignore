@@ -2,6 +2,9 @@
 .env
 *.env
 
+# Local Docs
+docs/deployment-strategy.md
+
 # Data (raw scraped data, processed files, vector store)
 data/
 !data/.gitkeep

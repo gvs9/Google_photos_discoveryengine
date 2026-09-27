@@ -66,4 +66,9 @@ jobs:
           git config --global user.email "action@github.com"
           git add data/ outputs/
           # Only commit if there are changes
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update discovery insights: $(date +'%Y-%m-%d')" && git push)
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto-update discovery insights: $(date +'%Y-%m-%d')"
+            git push
+          else
+            echo "No changes in data/ or outputs/ to commit."
+          fi

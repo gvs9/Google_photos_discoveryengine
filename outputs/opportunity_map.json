@@ -1,0 +1,298 @@
+{
+  "clusters": [
+    {
+      "rank": 1,
+      "label": "Slow and crashing timeline scroll in Google Photos",
+      "volume": 39,
+      "gap": "Presentation Gap",
+      "top_quotes": [
+        "Timeline scroll is too slow and crashes often. Context: Not foolproof",
+        "Timeline scroll is too slow and crashes often. Context: I can",
+        "Timeline scroll is too slow and crashes often. Context: The problem",
+        "Timeline scroll is too slow and crashes often. Context: What would",
+        "Timeline scroll is too slow and crashes often. Context: Thank goodness"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"date\"]",
+        "[\"location\"]"
+      ],
+      "behavior_tags": [
+        "[\"searched keywords\"]",
+        "[\"browse\"]",
+        "[\"scrolled timeline\", \"searched keywords\"]"
+      ]
+    },
+    {
+      "rank": 2,
+      "label": "Recent UI update hides search bar issue",
+      "volume": 35,
+      "gap": "Expression Gap",
+      "top_quotes": [
+        "Recent UI update removed the search bar. Context: However Google",
+        "Recent UI update removed the search bar. Context: Truly the",
+        "Recent UI update removed the search bar. Context: Thousands of",
+        "Recent UI update removed the search bar. Context: Right now,",
+        "Recent UI update removed the search bar. Context: Great with"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"date\"]",
+        "[\"person\"]"
+      ],
+      "behavior_tags": [
+        "[\"browse\"]",
+        "[\"searched keywords\"]",
+        "[\"scrolled timeline\"]"
+      ]
+    },
+    {
+      "rank": 3,
+      "label": "Inaccurate facial recognition grouping in Google Photos",
+      "volume": 31,
+      "gap": "Intent Gap",
+      "top_quotes": [
+        "Facial recognition grouped the wrong people together. Context: I rarely",
+        "Facial recognition grouped the wrong people together. Context: I am",
+        "Facial recognition grouped the wrong people together. Context: Google Photos",
+        "Facial recognition grouped the wrong people together. Context: Older version",
+        "Facial recognition grouped the wrong people together. Context: When searching"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"date\"]",
+        "[\"date\", \"person\"]"
+      ],
+      "behavior_tags": [
+        "[\"browse\"]",
+        "[\"searched keywords\"]",
+        "[\"scrolled timeline\", \"searched keywords\"]"
+      ]
+    },
+    {
+      "rank": 4,
+      "label": "Albums syncing issues with Google Photos cloud backup",
+      "volume": 31,
+      "gap": "Expression Gap",
+      "top_quotes": [
+        "Albums are not syncing with the cloud backup. Context: A photo",
+        "Albums are not syncing with the cloud backup. Context: It seems",
+        "Albums are not syncing with the cloud backup. Context: Amazing Features",
+        "Albums are not syncing with the cloud backup. Context: One of",
+        "Albums are not syncing with the cloud backup. Context: Recent updates"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"date\"]",
+        "[\"location\"]"
+      ],
+      "behavior_tags": [
+        "[\"searched keywords\"]",
+        "[\"browse\"]",
+        "[\"scrolled timeline\", \"searched keywords\"]"
+      ]
+    },
+    {
+      "rank": 5,
+      "label": "Irrelevant search results in Google Photos",
+      "volume": 30,
+      "gap": "Intent Gap",
+      "top_quotes": [
+        "Search results show completely unrelated images. Context: So I",
+        "Search results show completely unrelated images. Context: Just exchanging",
+        "Search results show completely unrelated images. Context: They give",
+        "Search results show completely unrelated images. Context: WRONG. Instead,",
+        "Search results show completely unrelated images. Context: Love love"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"date\"]",
+        "[\"location\"]"
+      ],
+      "behavior_tags": [
+        "[\"searched keywords\"]",
+        "[\"browse\"]",
+        "[\"scrolled timeline\"]"
+      ]
+    },
+    {
+      "rank": 6,
+      "label": "Photos unexpectedly deleted or missing, varying user contexts",
+      "volume": 26,
+      "gap": "Recovery Gap",
+      "top_quotes": [
+        "Photos are missing or completely deleted without warning. Context: Deleted all",
+        "Photos are missing or completely deleted without warning. Context: New search",
+        "Photos are missing or completely deleted without warning. Context: No way",
+        "Photos are missing or completely deleted without warning. Context: Why remove",
+        "Photos are missing or completely deleted without warning. Context: I cannot"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"date\"]",
+        "[\"person\"]"
+      ],
+      "behavior_tags": [
+        "[\"browse\"]",
+        "[\"searched keywords\"]",
+        "[\"scrolled timeline\", \"searched keywords\"]"
+      ]
+    },
+    {
+      "rank": 7,
+      "label": "Inaccurate search by location and face in Google Photos",
+      "volume": 25,
+      "gap": "Intent Gap",
+      "top_quotes": [
+        "Search by location or face is not working correctly. Context: Take me",
+        "Search by location or face is not working correctly. Context: I am",
+        "Search by location or face is not working correctly. Context: Google Photos",
+        "Search by location or face is not working correctly. Context: Stylized pictures,",
+        "Search by location or face is not working correctly. Context: Searched online"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"date\"]",
+        "[\"location\"]"
+      ],
+      "behavior_tags": [
+        "[\"searched keywords\"]",
+        "[\"browse\"]",
+        "[\"scrolled timeline\", \"searched keywords\"]"
+      ]
+    },
+    {
+      "rank": 8,
+      "label": "Excessive battery consumption during photos indexing",
+      "volume": 20,
+      "gap": "Presentation Gap",
+      "top_quotes": [
+        "App uses too much battery when indexing photos. Context: Tremendous help",
+        "App uses too much battery when indexing photos. Context: I am",
+        "App uses too much battery when indexing photos. Context: Works well,",
+        "App uses too much battery when indexing photos. Context: Search doesn't",
+        "App uses too much battery when indexing photos. Context: The new"
+      ],
+      "memory_cues": [
+        "[\"date\"]",
+        "[\"visual details\"]",
+        "[\"date\", \"person\"]"
+      ],
+      "behavior_tags": [
+        "[\"searched keywords\"]",
+        "[\"browse\"]"
+      ]
+    },
+    {
+      "rank": 9,
+      "label": "Inconsistent search results for backed-up old photos in Google Photos",
+      "volume": 19,
+      "gap": "Presentation Gap",
+      "top_quotes": [
+        "Cannot find old photos even though they are backed up. Context: Not Perfect",
+        "Cannot find old photos even though they are backed up. Context: Unfortunately I",
+        "Cannot find old photos even though they are backed up. Context: Search used",
+        "Cannot find old photos even though they are backed up. Context: Your search",
+        "Cannot find old photos even though they are backed up. Context: Photos go"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"date\"]",
+        "[\"person\"]"
+      ],
+      "behavior_tags": [
+        "[\"browse\"]",
+        "[\"searched keywords\"]"
+      ]
+    },
+    {
+      "rank": 10,
+      "label": "Lack of date-based search in Google Photos",
+      "volume": 16,
+      "gap": "Expression Gap",
+      "top_quotes": [
+        "Can't search by specific dates or years anymore. Context: This app",
+        "Can't search by specific dates or years anymore. Context: Fix Google",
+        "Can't search by specific dates or years anymore. Context: This app",
+        "Can't search by specific dates or years anymore. Context: app never",
+        "Can't search by specific dates or years anymore. Context: When the"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"date\"]",
+        "[\"person\"]"
+      ],
+      "behavior_tags": [
+        "[\"browse\"]",
+        "[\"searched keywords\"]"
+      ]
+    },
+    {
+      "rank": 11,
+      "label": "Inability to locate old backed-up photos in Google Photos",
+      "volume": 10,
+      "gap": "Recovery Gap",
+      "top_quotes": [
+        "Cannot find old photos even though they are backed up. Context: Google Photos",
+        "Cannot find old photos even though they are backed up. Context: Google Photos",
+        "Cannot find old photos even though they are backed up. Context: Google Photos",
+        "Cannot find old photos even though they are backed up. Context: Google Photos",
+        "Cannot find old photos even though they are backed up. Context: Google Photos"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"date\"]",
+        "[\"location\"]"
+      ],
+      "behavior_tags": [
+        "[\"searched keywords\"]",
+        "[\"browse\"]"
+      ]
+    },
+    {
+      "rank": 12,
+      "label": "Lack of date-based search in Google Photos",
+      "volume": 9,
+      "gap": "Expression Gap",
+      "top_quotes": [
+        "Can't search by specific dates or years anymore. Context: Google photos",
+        "Can't search by specific dates or years anymore. Context: Google photos",
+        "Can't search by specific dates or years anymore. Context: Google Photos",
+        "Can't search by specific dates or years anymore. Context: Google Photos",
+        "Can't search by specific dates or years anymore. Context: Google photos"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"location\"]",
+        "[\"person\"]"
+      ],
+      "behavior_tags": [
+        "[\"searched keywords\"]",
+        "[\"browse\"]"
+      ]
+    },
+    {
+      "rank": 13,
+      "label": "Lost search bar in Google Photos UI update",
+      "volume": 6,
+      "gap": "Expression Gap",
+      "top_quotes": [
+        "Recent UI update removed the search bar. Context: Google photos",
+        "Recent UI update removed the search bar. Context: Google Photos",
+        "Recent UI update removed the search bar. Context: Google Photos",
+        "Recent UI update removed the search bar. Context: The photos",
+        "Recent UI update removed the search bar. Context: Google Photos"
+      ],
+      "memory_cues": [
+        "[\"visual details\"]",
+        "[\"person\"]",
+        "[\"date\"]"
+      ],
+      "behavior_tags": [
+        "[\"browse\"]",
+        "[\"searched keywords\"]",
+        "[\"scrolled timeline\"]"
+      ]
+    }
+  ]
+}

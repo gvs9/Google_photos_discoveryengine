@@ -64,7 +64,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Action Bot"
           git config --global user.email "action@github.com"
-          git add data/ outputs/
+          git add -f data/ outputs/
           # Only commit if there are changes
           if ! git diff --staged --quiet; then
             git commit -m "Auto-update discovery insights: $(date +'%Y-%m-%d')"

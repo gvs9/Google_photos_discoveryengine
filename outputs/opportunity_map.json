@@ -25,7 +25,7 @@
     },
     {
       "rank": 2,
-      "label": "Recent UI update hides search bar issue",
+      "label": "Recent UI update hides search bar, impacting user experience and functionality",
       "volume": 35,
       "gap": "Expression Gap",
       "top_quotes": [
@@ -48,8 +48,8 @@
     },
     {
       "rank": 3,
-      "label": "Inaccurate facial recognition grouping in Google Photos",
-      "volume": 31,
+      "label": "Facial recognition inaccuracies grouping users in Google Photos",
+      "volume": 32,
       "gap": "Intent Gap",
       "top_quotes": [
         "Facial recognition grouped the wrong people together. Context: I rarely",
@@ -71,7 +71,7 @@
     },
     {
       "rank": 4,
-      "label": "Albums syncing issues with Google Photos cloud backup",
+      "label": "Albums syncing issue with cloud backup",
       "volume": 31,
       "gap": "Expression Gap",
       "top_quotes": [
@@ -94,9 +94,9 @@
     },
     {
       "rank": 5,
-      "label": "Irrelevant search results in Google Photos",
-      "volume": 30,
-      "gap": "Intent Gap",
+      "label": "Related image retrieval issue in Google Photos",
+      "volume": 31,
+      "gap": "Presentation Gap",
       "top_quotes": [
         "Search results show completely unrelated images. Context: So I",
         "Search results show completely unrelated images. Context: Just exchanging",
@@ -117,7 +117,7 @@
     },
     {
       "rank": 6,
-      "label": "Photos unexpectedly deleted or missing, varying user contexts",
+      "label": "Photos unexpectedly deleted or missing, without warning or options",
       "volume": 26,
       "gap": "Recovery Gap",
       "top_quotes": [
@@ -141,7 +141,7 @@
     {
       "rank": 7,
       "label": "Inaccurate search by location and face in Google Photos",
-      "volume": 25,
+      "volume": 26,
       "gap": "Intent Gap",
       "top_quotes": [
         "Search by location or face is not working correctly. Context: Take me",
@@ -163,7 +163,7 @@
     },
     {
       "rank": 8,
-      "label": "Excessive battery consumption during photos indexing",
+      "label": "Battery consumption during photos indexing",
       "volume": 20,
       "gap": "Presentation Gap",
       "top_quotes": [
@@ -186,8 +186,8 @@
     {
       "rank": 9,
       "label": "Inconsistent search results for backed-up old photos in Google Photos",
-      "volume": 19,
-      "gap": "Presentation Gap",
+      "volume": 20,
+      "gap": "Expression Gap",
       "top_quotes": [
         "Cannot find old photos even though they are backed up. Context: Not Perfect",
         "Cannot find old photos even though they are backed up. Context: Unfortunately I",
@@ -208,7 +208,7 @@
     {
       "rank": 10,
       "label": "Lack of date-based search in Google Photos",
-      "volume": 16,
+      "volume": 18,
       "gap": "Expression Gap",
       "top_quotes": [
         "Can't search by specific dates or years anymore. Context: This app",
@@ -229,7 +229,7 @@
     },
     {
       "rank": 11,
-      "label": "Inability to locate old backed-up photos in Google Photos",
+      "label": "Difficulty retrieving old photos in Google Photos despite backup",
       "volume": 10,
       "gap": "Recovery Gap",
       "top_quotes": [
@@ -273,7 +273,7 @@
     },
     {
       "rank": 13,
-      "label": "Lost search bar in Google Photos UI update",
+      "label": "Removed search bar in Google Photos' recent update",
       "volume": 6,
       "gap": "Expression Gap",
       "top_quotes": [

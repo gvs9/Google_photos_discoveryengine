@@ -1,43 +1,16 @@
 {
   "gaps": [
     {
-      "gap": "Expression Gap",
-      "volume_score": 0.55,
-      "severity_score": 3.21,
-      "uniqueness_score": 3.76,
-      "feasibility_score": 3.4,
-      "composite_score": 0.67,
-      "top_clusters": [
-        "Recent UI update hides search bar, affecting user experience and functionality",
-        "Inconsistent and unreliable search by location and face functionality in Google Photos",
-        "Lack of date-based search in Google Photos"
-      ],
-      "top_evidence_quotes": [
-        "Recent UI update removed the search bar. Context: However Google",
-        "Recent UI update removed the search bar. Context: Truly the",
-        "Recent UI update removed the search bar. Context: Thousands of",
-        "Recent UI update removed the search bar. Context: Right now,",
-        "Recent UI update removed the search bar. Context: Great with",
-        "Search by location or face is not working correctly. Context: Take me",
-        "Search by location or face is not working correctly. Context: I am",
-        "Search by location or face is not working correctly. Context: Google Photos",
-        "Search by location or face is not working correctly. Context: Stylized pictures,",
-        "Search by location or face is not working correctly. Context: Searched online"
-      ],
-      "recommended_metric_proxy": "% searches with zero clicks",
-      "total_volume": 109
-    },
-    {
       "gap": "Presentation Gap",
-      "volume_score": 0.47,
-      "severity_score": 3.19,
-      "uniqueness_score": 2.98,
-      "feasibility_score": 2.45,
-      "composite_score": 0.42,
+      "volume_score": 0.69,
+      "severity_score": 3.22,
+      "uniqueness_score": 3.07,
+      "feasibility_score": 3.74,
+      "composite_score": 0.98,
       "top_clusters": [
         "Slow and crashing timeline scroll in Google Photos",
-        "Related image retrieval issue in Google Photos",
-        "Excessive battery consumption during photos indexing"
+        "Albums sync issue with cloud backup",
+        "Related image retrieval issue in Google Photos"
       ],
       "top_evidence_quotes": [
         "Timeline scroll is too slow and crashes often. Context: Not foolproof",
@@ -45,61 +18,82 @@
         "Timeline scroll is too slow and crashes often. Context: The problem",
         "Timeline scroll is too slow and crashes often. Context: What would",
         "Timeline scroll is too slow and crashes often. Context: Thank goodness",
-        "Search results show completely unrelated images. Context: So I",
-        "Search results show completely unrelated images. Context: Just exchanging",
-        "Search results show completely unrelated images. Context: They give",
-        "Search results show completely unrelated images. Context: WRONG. Instead,",
-        "Search results show completely unrelated images. Context: Love love"
-      ],
-      "recommended_metric_proxy": "% sessions with rapid scrolling and exit",
-      "total_volume": 94
-    },
-    {
-      "gap": "Recovery Gap",
-      "volume_score": 0.39,
-      "severity_score": 3.28,
-      "uniqueness_score": 3.48,
-      "feasibility_score": 2.08,
-      "composite_score": 0.33,
-      "top_clusters": [
-        "Album syncing issues with cloud backup in Google Photos",
-        "Photos unexpectedly deleted or missing, varying user contexts",
-        "Inability to locate old backed-up photos in Google Photos"
-      ],
-      "top_evidence_quotes": [
         "Albums are not syncing with the cloud backup. Context: A photo",
         "Albums are not syncing with the cloud backup. Context: It seems",
         "Albums are not syncing with the cloud backup. Context: Amazing Features",
         "Albums are not syncing with the cloud backup. Context: One of",
-        "Albums are not syncing with the cloud backup. Context: Recent updates",
-        "Photos are missing or completely deleted without warning. Context: Deleted all",
-        "Photos are missing or completely deleted without warning. Context: New search",
-        "Photos are missing or completely deleted without warning. Context: No way",
-        "Photos are missing or completely deleted without warning. Context: Why remove",
-        "Photos are missing or completely deleted without warning. Context: I cannot"
+        "Albums are not syncing with the cloud backup. Context: Recent updates"
       ],
-      "recommended_metric_proxy": "% blank search abandonment",
-      "total_volume": 78
+      "recommended_metric_proxy": "% sessions with rapid scrolling and exit",
+      "total_volume": 138
     },
     {
-      "gap": "Intent Gap",
-      "volume_score": 0.17,
-      "severity_score": 3.35,
-      "uniqueness_score": 3.84,
-      "feasibility_score": 3.33,
-      "composite_score": 0.21,
+      "gap": "Expression Gap",
+      "volume_score": 0.8,
+      "severity_score": 3.28,
+      "uniqueness_score": 4.27,
+      "feasibility_score": 2.81,
+      "composite_score": 0.82,
       "top_clusters": [
-        "Inaccurate facial recognition grouping in Google Photos"
+        "Recent UI update hides search bar retrieval issue",
+        "Inconsistent and incorrect person grouping in Google Photos' facial recognition.",
+        "Inconsistent and unreliable search by location and face features in Google Photos"
       ],
       "top_evidence_quotes": [
+        "Recent UI update removed the search bar. Context: However Google",
+        "Recent UI update removed the search bar. Context: Truly the",
+        "Recent UI update removed the search bar. Context: Thousands of",
+        "Recent UI update removed the search bar. Context: Right now,",
+        "Recent UI update removed the search bar. Context: Great with",
         "Facial recognition grouped the wrong people together. Context: I rarely",
         "Facial recognition grouped the wrong people together. Context: I am",
         "Facial recognition grouped the wrong people together. Context: Google Photos",
         "Facial recognition grouped the wrong people together. Context: Older version",
         "Facial recognition grouped the wrong people together. Context: When searching"
       ],
+      "recommended_metric_proxy": "% searches with zero clicks",
+      "total_volume": 160
+    },
+    {
+      "gap": "Recovery Gap",
+      "volume_score": 0.19,
+      "severity_score": 3.26,
+      "uniqueness_score": 3.32,
+      "feasibility_score": 2.5,
+      "composite_score": 0.18,
+      "top_clusters": [
+        "Photos unexpectedly deleted or missing, without warning or options",
+        "Inconsistent photo retrieval in Google Photos despite backup"
+      ],
+      "top_evidence_quotes": [
+        "Photos are missing or completely deleted without warning. Context: Deleted all",
+        "Photos are missing or completely deleted without warning. Context: New search",
+        "Photos are missing or completely deleted without warning. Context: No way",
+        "Photos are missing or completely deleted without warning. Context: Why remove",
+        "Photos are missing or completely deleted without warning. Context: I cannot",
+        "Cannot find old photos even though they are backed up. Context: Google Photos"
+      ],
+      "recommended_metric_proxy": "% blank search abandonment",
+      "total_volume": 38
+    },
+    {
+      "gap": "Intent Gap",
+      "volume_score": 0.04,
+      "severity_score": 3.43,
+      "uniqueness_score": 2.94,
+      "feasibility_score": 3.11,
+      "composite_score": 0.04,
+      "top_clusters": [
+        "Inconsistent and inaccurate location and face search in Google Photos"
+      ],
+      "top_evidence_quotes": [
+        "Search by location or face is not working correctly. Context: Google Photos",
+        "Search by location or face is not working correctly. Context: Photos used",
+        "Search by location or face is not working correctly. Context: MY PHOTOS",
+        "Search by location or face is not working correctly. Context: Photos search"
+      ],
       "recommended_metric_proxy": "% searches followed by immediate query refinement",
-      "total_volume": 34
+      "total_volume": 7
     }
   ]
 }

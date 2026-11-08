@@ -25,7 +25,7 @@
     },
     {
       "rank": 2,
-      "label": "Recent UI update hides search bar retrieval issue",
+      "label": "Recent UI update hides search bar issue",
       "volume": 40,
       "gap": "Expression Gap",
       "top_quotes": [
@@ -48,7 +48,7 @@
     },
     {
       "rank": 3,
-      "label": "Inconsistent and incorrect person grouping in Google Photos' facial recognition.",
+      "label": "Inconsistent and incorrect person grouping in Google Photos' facial recognition",
       "volume": 38,
       "gap": "Expression Gap",
       "top_quotes": [
@@ -71,7 +71,7 @@
     },
     {
       "rank": 4,
-      "label": "Albums sync issue with cloud backup",
+      "label": "Albums syncing issues with Google Photos cloud backup",
       "volume": 36,
       "gap": "Presentation Gap",
       "top_quotes": [
@@ -96,7 +96,7 @@
       "rank": 5,
       "label": "Related image retrieval issue in Google Photos",
       "volume": 32,
-      "gap": "Presentation Gap",
+      "gap": "Intent Gap",
       "top_quotes": [
         "Search results show completely unrelated images. Context: So I",
         "Search results show completely unrelated images. Context: Just exchanging",
@@ -117,7 +117,7 @@
     },
     {
       "rank": 6,
-      "label": "Photos unexpectedly deleted or missing, without warning or options",
+      "label": "Photos unexpectedly missing or deleted without notice",
       "volume": 28,
       "gap": "Recovery Gap",
       "top_quotes": [
@@ -163,7 +163,7 @@
     },
     {
       "rank": 8,
-      "label": "Inconsistent and unreliable search by location and face features in Google Photos",
+      "label": "Incorrect search by location or face in Google Photos",
       "volume": 26,
       "gap": "Expression Gap",
       "top_quotes": [
@@ -230,7 +230,7 @@
     },
     {
       "rank": 11,
-      "label": "Inconsistent photo retrieval in Google Photos despite backup",
+      "label": "Issue with retrieving old photos in Google Photos",
       "volume": 10,
       "gap": "Recovery Gap",
       "top_quotes": [
@@ -252,7 +252,7 @@
     },
     {
       "rank": 12,
-      "label": "Lack of date-based search in Google Photos",
+      "label": "Limited date-based search in Google Photos",
       "volume": 9,
       "gap": "Expression Gap",
       "top_quotes": [

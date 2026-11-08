@@ -1,43 +1,16 @@
 {
   "gaps": [
     {
-      "gap": "Presentation Gap",
-      "volume_score": 0.69,
-      "severity_score": 3.22,
-      "uniqueness_score": 3.07,
-      "feasibility_score": 3.74,
-      "composite_score": 0.98,
-      "top_clusters": [
-        "Slow and crashing timeline scroll in Google Photos",
-        "Albums sync issue with cloud backup",
-        "Related image retrieval issue in Google Photos"
-      ],
-      "top_evidence_quotes": [
-        "Timeline scroll is too slow and crashes often. Context: Not foolproof",
-        "Timeline scroll is too slow and crashes often. Context: I can",
-        "Timeline scroll is too slow and crashes often. Context: The problem",
-        "Timeline scroll is too slow and crashes often. Context: What would",
-        "Timeline scroll is too slow and crashes often. Context: Thank goodness",
-        "Albums are not syncing with the cloud backup. Context: A photo",
-        "Albums are not syncing with the cloud backup. Context: It seems",
-        "Albums are not syncing with the cloud backup. Context: Amazing Features",
-        "Albums are not syncing with the cloud backup. Context: One of",
-        "Albums are not syncing with the cloud backup. Context: Recent updates"
-      ],
-      "recommended_metric_proxy": "% sessions with rapid scrolling and exit",
-      "total_volume": 138
-    },
-    {
       "gap": "Expression Gap",
       "volume_score": 0.8,
       "severity_score": 3.28,
-      "uniqueness_score": 4.27,
-      "feasibility_score": 2.81,
-      "composite_score": 0.82,
+      "uniqueness_score": 2.5,
+      "feasibility_score": 2.3,
+      "composite_score": 0.71,
       "top_clusters": [
-        "Recent UI update hides search bar retrieval issue",
-        "Inconsistent and incorrect person grouping in Google Photos' facial recognition.",
-        "Inconsistent and unreliable search by location and face features in Google Photos"
+        "Recent UI update hides search bar issue",
+        "Inconsistent and incorrect person grouping in Google Photos' facial recognition",
+        "Incorrect search by location or face in Google Photos"
       ],
       "top_evidence_quotes": [
         "Recent UI update removed the search bar. Context: However Google",
@@ -55,15 +28,42 @@
       "total_volume": 160
     },
     {
+      "gap": "Presentation Gap",
+      "volume_score": 0.53,
+      "severity_score": 3.23,
+      "uniqueness_score": 2.62,
+      "feasibility_score": 3.13,
+      "composite_score": 0.6,
+      "top_clusters": [
+        "Slow and crashing timeline scroll in Google Photos",
+        "Albums syncing issues with Google Photos cloud backup",
+        "Battery consumption during photos indexing"
+      ],
+      "top_evidence_quotes": [
+        "Timeline scroll is too slow and crashes often. Context: Not foolproof",
+        "Timeline scroll is too slow and crashes often. Context: I can",
+        "Timeline scroll is too slow and crashes often. Context: The problem",
+        "Timeline scroll is too slow and crashes often. Context: What would",
+        "Timeline scroll is too slow and crashes often. Context: Thank goodness",
+        "Albums are not syncing with the cloud backup. Context: A photo",
+        "Albums are not syncing with the cloud backup. Context: It seems",
+        "Albums are not syncing with the cloud backup. Context: Amazing Features",
+        "Albums are not syncing with the cloud backup. Context: One of",
+        "Albums are not syncing with the cloud backup. Context: Recent updates"
+      ],
+      "recommended_metric_proxy": "% sessions with rapid scrolling and exit",
+      "total_volume": 106
+    },
+    {
       "gap": "Recovery Gap",
       "volume_score": 0.19,
       "severity_score": 3.26,
-      "uniqueness_score": 3.32,
-      "feasibility_score": 2.5,
-      "composite_score": 0.18,
+      "uniqueness_score": 2.91,
+      "feasibility_score": 3.01,
+      "composite_score": 0.21,
       "top_clusters": [
-        "Photos unexpectedly deleted or missing, without warning or options",
-        "Inconsistent photo retrieval in Google Photos despite backup"
+        "Photos unexpectedly missing or deleted without notice",
+        "Issue with retrieving old photos in Google Photos"
       ],
       "top_evidence_quotes": [
         "Photos are missing or completely deleted without warning. Context: Deleted all",
@@ -78,22 +78,28 @@
     },
     {
       "gap": "Intent Gap",
-      "volume_score": 0.04,
-      "severity_score": 3.43,
-      "uniqueness_score": 2.94,
-      "feasibility_score": 3.11,
-      "composite_score": 0.04,
+      "volume_score": 0.2,
+      "severity_score": 3.23,
+      "uniqueness_score": 2.66,
+      "feasibility_score": 2.12,
+      "composite_score": 0.16,
       "top_clusters": [
+        "Related image retrieval issue in Google Photos",
         "Inconsistent and inaccurate location and face search in Google Photos"
       ],
       "top_evidence_quotes": [
+        "Search results show completely unrelated images. Context: So I",
+        "Search results show completely unrelated images. Context: Just exchanging",
+        "Search results show completely unrelated images. Context: They give",
+        "Search results show completely unrelated images. Context: WRONG. Instead,",
+        "Search results show completely unrelated images. Context: Love love",
         "Search by location or face is not working correctly. Context: Google Photos",
         "Search by location or face is not working correctly. Context: Photos used",
         "Search by location or face is not working correctly. Context: MY PHOTOS",
         "Search by location or face is not working correctly. Context: Photos search"
       ],
       "recommended_metric_proxy": "% searches followed by immediate query refinement",
-      "total_volume": 7
+      "total_volume": 39
     }
   ]
 }

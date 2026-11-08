@@ -1,12 +1,12 @@
 # Google Photos Discovery Engine: Insight Report
 
 ## 1. Executive Summary
-- **Top Issue**: The most critical gap is the **Presentation Gap**, driven by 138 user complaints.
+- **Top Issue**: The most critical gap is the **Expression Gap**, driven by 160 user complaints.
 - **Key Finding**: Users frequently struggle with: 'Slow and crashing timeline scroll in Google Photos'
-- **Actionable Proxy**: The recommended metric proxy to track improvement is: `% sessions with rapid scrolling and exit`.
+- **Actionable Proxy**: The recommended metric proxy to track improvement is: `% searches with zero clicks`.
 
 ## 2. Data Collection Summary
-- **Total Analyzed Chunks**: 869
+- **Total Analyzed Chunks**: 876
 - **Relevance Pass Rate**: Validated retrieval-related chunks successfully grouped into opportunity clusters.
 
 ## 3. Key Retrieval Problems (Top Clusters)
@@ -16,31 +16,31 @@
 - **Top Behaviors**: ["searched keywords"], ["browse"], ["scrolled timeline", "searched keywords"]
 - **Verbatim Evidence**: *"Timeline scroll is too slow and crashes often. Context: Not foolproof"*
 
-### Rank 2: Recent UI update hides search bar retrieval issue (Volume: 40)
+### Rank 2: Recent UI update hides search bar issue (Volume: 40)
 - **Primary Gap**: Expression Gap
 - **Top Memory Cues**: ["visual details"], ["date"], ["person"]
 - **Top Behaviors**: ["browse"], ["searched keywords"], ["scrolled timeline"]
 - **Verbatim Evidence**: *"Recent UI update removed the search bar. Context: However Google"*
 
-### Rank 3: Inconsistent and incorrect person grouping in Google Photos' facial recognition. (Volume: 38)
+### Rank 3: Inconsistent and incorrect person grouping in Google Photos' facial recognition (Volume: 38)
 - **Primary Gap**: Expression Gap
 - **Top Memory Cues**: ["visual details"], ["date"], ["date", "person"]
 - **Top Behaviors**: ["browse"], ["searched keywords"], ["scrolled timeline", "searched keywords"]
 - **Verbatim Evidence**: *"Facial recognition grouped the wrong people together. Context: I rarely"*
 
-### Rank 4: Albums sync issue with cloud backup (Volume: 36)
+### Rank 4: Albums syncing issues with Google Photos cloud backup (Volume: 36)
 - **Primary Gap**: Presentation Gap
 - **Top Memory Cues**: ["visual details"], ["date"], ["person"]
 - **Top Behaviors**: ["searched keywords"], ["browse"], ["scrolled timeline", "searched keywords"]
 - **Verbatim Evidence**: *"Albums are not syncing with the cloud backup. Context: A photo"*
 
 ### Rank 5: Related image retrieval issue in Google Photos (Volume: 32)
-- **Primary Gap**: Presentation Gap
+- **Primary Gap**: Intent Gap
 - **Top Memory Cues**: ["visual details"], ["date"], ["person"]
 - **Top Behaviors**: ["searched keywords"], ["browse"], ["scrolled timeline"]
 - **Verbatim Evidence**: *"Search results show completely unrelated images. Context: So I"*
 
-### Rank 6: Photos unexpectedly deleted or missing, without warning or options (Volume: 28)
+### Rank 6: Photos unexpectedly missing or deleted without notice (Volume: 28)
 - **Primary Gap**: Recovery Gap
 - **Top Memory Cues**: ["visual details"], ["date"], ["person"]
 - **Top Behaviors**: ["browse"], ["searched keywords"], ["scrolled timeline", "searched keywords"]
@@ -52,7 +52,7 @@
 - **Top Behaviors**: ["searched keywords"], ["browse"], ["scrolled timeline", "searched keywords"]
 - **Verbatim Evidence**: *"App uses too much battery when indexing photos. Context: Tremendous help"*
 
-### Rank 8: Inconsistent and unreliable search by location and face features in Google Photos (Volume: 26)
+### Rank 8: Incorrect search by location or face in Google Photos (Volume: 26)
 - **Primary Gap**: Expression Gap
 - **Top Memory Cues**: ["visual details"], ["date"], ["location", "person"]
 - **Top Behaviors**: ["searched keywords"], ["browse"], ["scrolled timeline", "searched keywords"]
@@ -73,7 +73,7 @@
 ## 4. Memory Cue Analysis
 | Cue Type | Frequency |
 |---|---|
-| [] | 502 |
+| [] | 509 |
 | ["visual details"] | 210 |
 | ["date"] | 88 |
 | ["person"] | 27 |
@@ -83,22 +83,22 @@
 ## 5. Gap Distribution
 | Gap | Volume |
 |---|---|
-| Presentation Gap | 138 |
 | Expression Gap | 160 |
+| Presentation Gap | 106 |
 | Recovery Gap | 38 |
-| Intent Gap | 7 |
+| Intent Gap | 39 |
 
 
 ## 6. Opportunity Scorecard
 | Rank | Gap | Composite Score | Recommended Metric Proxy |
 |---|---|---|---|
-| 1 | **Presentation Gap** | 0.98 | % sessions with rapid scrolling and exit |
-| 2 | **Expression Gap** | 0.82 | % searches with zero clicks |
-| 3 | **Recovery Gap** | 0.18 | % blank search abandonment |
-| 4 | **Intent Gap** | 0.04 | % searches followed by immediate query refinement |
+| 1 | **Expression Gap** | 0.71 | % searches with zero clicks |
+| 2 | **Presentation Gap** | 0.6 | % sessions with rapid scrolling and exit |
+| 3 | **Recovery Gap** | 0.21 | % blank search abandonment |
+| 4 | **Intent Gap** | 0.16 | % searches followed by immediate query refinement |
 
 
 ## 7. Recommended Next Step
-Focus immediate product investigation on the **Presentation Gap**.
+Focus immediate product investigation on the **Expression Gap**.
 The most prevalent issue reported by users in this area is:
-> *"Timeline scroll is too slow and crashes often. Context: Not foolproof"*
+> *"Recent UI update removed the search bar. Context: However Google"*

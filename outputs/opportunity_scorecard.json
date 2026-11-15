@@ -1,91 +1,43 @@
 {
   "gaps": [
     {
-      "gap": "Expression Gap",
-      "volume_score": 0.8,
-      "severity_score": 3.28,
-      "uniqueness_score": 2.5,
-      "feasibility_score": 2.3,
-      "composite_score": 0.71,
+      "gap": "Intent Gap",
+      "volume_score": 0.5,
+      "severity_score": 3.29,
+      "uniqueness_score": 2.95,
+      "feasibility_score": 3.87,
+      "composite_score": 0.77,
       "top_clusters": [
-        "Recent UI update hides search bar issue",
-        "Inconsistent and incorrect person grouping in Google Photos' facial recognition",
-        "Incorrect search by location or face in Google Photos"
+        "Inaccurate facial recognition grouping in Google Photos",
+        "Inaccurate search by location and face in Google Photos",
+        "Inaccurate location and face search in Google Photos"
       ],
       "top_evidence_quotes": [
-        "Recent UI update removed the search bar. Context: However Google",
-        "Recent UI update removed the search bar. Context: Truly the",
-        "Recent UI update removed the search bar. Context: Thousands of",
-        "Recent UI update removed the search bar. Context: Right now,",
-        "Recent UI update removed the search bar. Context: Great with",
         "Facial recognition grouped the wrong people together. Context: I rarely",
         "Facial recognition grouped the wrong people together. Context: I am",
         "Facial recognition grouped the wrong people together. Context: Google Photos",
         "Facial recognition grouped the wrong people together. Context: Older version",
-        "Facial recognition grouped the wrong people together. Context: When searching"
+        "Facial recognition grouped the wrong people together. Context: When searching",
+        "Search by location or face is not working correctly. Context: I am",
+        "Search by location or face is not working correctly. Context: Searched online",
+        "Search by location or face is not working correctly. Context: The new",
+        "Search by location or face is not working correctly. Context: This was",
+        "Search by location or face is not working correctly. Context: this app"
       ],
-      "recommended_metric_proxy": "% searches with zero clicks",
-      "total_volume": 160
-    },
-    {
-      "gap": "Presentation Gap",
-      "volume_score": 0.53,
-      "severity_score": 3.23,
-      "uniqueness_score": 2.62,
-      "feasibility_score": 3.13,
-      "composite_score": 0.6,
-      "top_clusters": [
-        "Slow and crashing timeline scroll in Google Photos",
-        "Albums syncing issues with Google Photos cloud backup",
-        "Battery consumption during photos indexing"
-      ],
-      "top_evidence_quotes": [
-        "Timeline scroll is too slow and crashes often. Context: Not foolproof",
-        "Timeline scroll is too slow and crashes often. Context: I can",
-        "Timeline scroll is too slow and crashes often. Context: The problem",
-        "Timeline scroll is too slow and crashes often. Context: What would",
-        "Timeline scroll is too slow and crashes often. Context: Thank goodness",
-        "Albums are not syncing with the cloud backup. Context: A photo",
-        "Albums are not syncing with the cloud backup. Context: It seems",
-        "Albums are not syncing with the cloud backup. Context: Amazing Features",
-        "Albums are not syncing with the cloud backup. Context: One of",
-        "Albums are not syncing with the cloud backup. Context: Recent updates"
-      ],
-      "recommended_metric_proxy": "% sessions with rapid scrolling and exit",
-      "total_volume": 106
+      "recommended_metric_proxy": "% searches followed by immediate query refinement",
+      "total_volume": 100
     },
     {
       "gap": "Recovery Gap",
-      "volume_score": 0.19,
-      "severity_score": 3.26,
-      "uniqueness_score": 2.91,
-      "feasibility_score": 3.01,
-      "composite_score": 0.21,
+      "volume_score": 0.68,
+      "severity_score": 3.22,
+      "uniqueness_score": 2.99,
+      "feasibility_score": 3.11,
+      "composite_score": 0.76,
       "top_clusters": [
-        "Photos unexpectedly missing or deleted without notice",
-        "Issue with retrieving old photos in Google Photos"
-      ],
-      "top_evidence_quotes": [
-        "Photos are missing or completely deleted without warning. Context: Deleted all",
-        "Photos are missing or completely deleted without warning. Context: New search",
-        "Photos are missing or completely deleted without warning. Context: No way",
-        "Photos are missing or completely deleted without warning. Context: Why remove",
-        "Photos are missing or completely deleted without warning. Context: I cannot",
-        "Cannot find old photos even though they are backed up. Context: Google Photos"
-      ],
-      "recommended_metric_proxy": "% blank search abandonment",
-      "total_volume": 38
-    },
-    {
-      "gap": "Intent Gap",
-      "volume_score": 0.2,
-      "severity_score": 3.23,
-      "uniqueness_score": 2.66,
-      "feasibility_score": 2.12,
-      "composite_score": 0.16,
-      "top_clusters": [
-        "Related image retrieval issue in Google Photos",
-        "Inconsistent and inaccurate location and face search in Google Photos"
+        "Relation-unrelated search results in Google Photos",
+        "Albums sync issues with cloud backup in Google Photos",
+        "Photos unaccountably deleted or missing without notice"
       ],
       "top_evidence_quotes": [
         "Search results show completely unrelated images. Context: So I",
@@ -93,13 +45,68 @@
         "Search results show completely unrelated images. Context: They give",
         "Search results show completely unrelated images. Context: WRONG. Instead,",
         "Search results show completely unrelated images. Context: Love love",
-        "Search by location or face is not working correctly. Context: Google Photos",
-        "Search by location or face is not working correctly. Context: Photos used",
-        "Search by location or face is not working correctly. Context: MY PHOTOS",
-        "Search by location or face is not working correctly. Context: Photos search"
+        "Albums are not syncing with the cloud backup. Context: A photo",
+        "Albums are not syncing with the cloud backup. Context: It seems",
+        "Albums are not syncing with the cloud backup. Context: Amazing Features",
+        "Albums are not syncing with the cloud backup. Context: One of",
+        "Albums are not syncing with the cloud backup. Context: Recent updates"
       ],
-      "recommended_metric_proxy": "% searches followed by immediate query refinement",
-      "total_volume": 39
+      "recommended_metric_proxy": "% blank search abandonment",
+      "total_volume": 137
+    },
+    {
+      "gap": "Expression Gap",
+      "volume_score": 0.44,
+      "severity_score": 3.22,
+      "uniqueness_score": 4.41,
+      "feasibility_score": 3.97,
+      "composite_score": 0.7,
+      "top_clusters": [
+        "Recent UI update caused missing search bar in Google Photos",
+        "Lack of date-based search in Google Photos",
+        "Limited search by dates functionality in Google Photos"
+      ],
+      "top_evidence_quotes": [
+        "Recent UI update removed the search bar. Context: However Google",
+        "Recent UI update removed the search bar. Context: Truly the",
+        "Recent UI update removed the search bar. Context: Thousands of",
+        "Recent UI update removed the search bar. Context: Right now,",
+        "Recent UI update removed the search bar. Context: Great with",
+        "Can't search by specific dates or years anymore. Context: This app",
+        "Can't search by specific dates or years anymore. Context: Fix Google",
+        "Can't search by specific dates or years anymore. Context: app never",
+        "Can't search by specific dates or years anymore. Context: When the",
+        "Can't search by specific dates or years anymore. Context: Google photos"
+      ],
+      "recommended_metric_proxy": "% searches with zero clicks",
+      "total_volume": 88
+    },
+    {
+      "gap": "Presentation Gap",
+      "volume_score": 0.57,
+      "severity_score": 3.23,
+      "uniqueness_score": 4.26,
+      "feasibility_score": 2.54,
+      "composite_score": 0.54,
+      "top_clusters": [
+        "Slow and crashing timeline scroll in Google Photos",
+        "Battery consumption during photo indexing",
+        "Inconsistent search results for backed-up old photos in Google Photos"
+      ],
+      "top_evidence_quotes": [
+        "Timeline scroll is too slow and crashes often. Context: Not foolproof",
+        "Timeline scroll is too slow and crashes often. Context: I can",
+        "Timeline scroll is too slow and crashes often. Context: The problem",
+        "Timeline scroll is too slow and crashes often. Context: What would",
+        "Timeline scroll is too slow and crashes often. Context: Thank goodness",
+        "App uses too much battery when indexing photos. Context: Tremendous help",
+        "App uses too much battery when indexing photos. Context: I am",
+        "App uses too much battery when indexing photos. Context: Works well,",
+        "App uses too much battery when indexing photos. Context: Search doesn't",
+        "App uses too much battery when indexing photos. Context: The new"
+      ],
+      "recommended_metric_proxy": "% sessions with rapid scrolling and exit",
+      "total_volume": 115
     }
   ]
 }
